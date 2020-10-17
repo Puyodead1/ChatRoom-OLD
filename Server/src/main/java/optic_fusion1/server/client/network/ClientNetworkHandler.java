@@ -12,7 +12,8 @@ import optic_fusion1.packet.ClientNicknameChangePacket;
 import optic_fusion1.packet.Packet;
 import static optic_fusion1.server.Main.LOGGER;
 import optic_fusion1.server.client.Client;
-import optic_fusion1.server.network.NetworkHandler;
+import optic_fusion1.server.server.Server;
+import optic_fusion1.server.server.network.ServerNetworkHandler;
 
 public class ClientNetworkHandler extends Thread {
 
@@ -20,10 +21,11 @@ public class ClientNetworkHandler extends Thread {
   private final ObjectOutputStream output;
   private final ObjectInputStream input;
   private boolean running;
-  private final NetworkHandler networkHandler;
+  private final ServerNetworkHandler networkHandler;
   private Client client;
+  private Server server;
 
-  public ClientNetworkHandler(Client client, Socket socket, NetworkHandler networkHandler) throws IOException {
+  public ClientNetworkHandler(Server server, Client client, Socket socket, ServerNetworkHandler networkHandler) throws IOException {
     setName("Server[Client:" + client.getId() + "]/NetworkHandler");
     this.client = client;
     this.socket = socket;
@@ -44,7 +46,7 @@ public class ClientNetworkHandler extends Thread {
         }
         if (object instanceof ClientNicknameChangePacket) {
           String nickname = ((ClientNicknameChangePacket) object).getNickName();
-          if (networkHandler.getClientList().isNicknameInUse(nickname)) {
+          if (server.isNicknameInUse(nickname)) {
             String message = "The nickname " + nickname + " is already being used";
             sendPacket(new ChatMessagePacket(message));
             LOGGER.info(message);
@@ -73,7 +75,7 @@ public class ClientNetworkHandler extends Thread {
     input.close();
     socket.close();
     running = false;
-    networkHandler.getClientList().removeClient(client.getUniqueId());
+    server.removeClient(client.getUniqueId());
     socket = null;
     client = null;
     try {

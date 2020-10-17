@@ -5,7 +5,8 @@ import java.net.Socket;
 import java.util.UUID;
 import static optic_fusion1.server.Main.LOGGER;
 import optic_fusion1.server.client.network.ClientNetworkHandler;
-import optic_fusion1.server.network.NetworkHandler;
+import optic_fusion1.server.server.Server;
+import optic_fusion1.server.server.network.ServerNetworkHandler;
 
 public class Client {
 
@@ -14,9 +15,9 @@ public class Client {
   private final ClientNetworkHandler clientNetworkHandler;
   private final int id;
 
-  public Client(Socket socket, NetworkHandler networkHandler, int id) throws IOException {
+  public Client(Server server, Socket socket, ServerNetworkHandler networkHandler, int id) throws IOException {
     this.id = id;
-    (clientNetworkHandler = new ClientNetworkHandler(this, socket, networkHandler)).start();
+    (clientNetworkHandler = new ClientNetworkHandler(server, this, socket, networkHandler)).start();
     nickname = "Client#" + id;
   }
 
