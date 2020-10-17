@@ -30,7 +30,7 @@ public class CustomLogger {
 
   public CustomLogger() {
     dateFormatted = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    logDirectory = new File("logs");
+    logDirectory = new File("server", "logs");
     if (!logDirectory.exists()) {
       logDirectory.mkdirs();
     }

@@ -41,16 +41,16 @@ public class Server {
         serverAddress = null;
       }
     }
-    serverNetworkHandler = new ServerNetworkHandler(this, serverAddress, 0);
+    serverNetworkHandler = new ServerNetworkHandler(this, serverAddress, serverPort);
     LOGGER.info("Starting Server on " + ((serverIP.length() == 0) ? "*" : serverIP) + ":" + serverPort);
     serverNetworkHandler.start();
     running = true;
   }
 
   private void loadPropertiesFile() {
-    File file = new File("server.properties");
+    File file = new File("server", "server.properties");
     if (!file.exists()) {
-      Utils.saveResource(file, "server.properties", false);
+      Utils.saveResource(new File("server"), "server.properties", false);
     }
     try {
       serverProperties.load(new FileInputStream(file));
