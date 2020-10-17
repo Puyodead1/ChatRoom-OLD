@@ -33,6 +33,7 @@ public class ClientNetworkHandler extends Thread {
     output = new ObjectOutputStream(socket.getOutputStream());
     input = new ObjectInputStream(socket.getInputStream());
     running = true;
+    this.server = server;
   }
 
   @Override
