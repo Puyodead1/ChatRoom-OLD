@@ -16,9 +16,9 @@ import optic_fusion1.packet.Packet;
 public class NetworkHandler extends Thread {
 
   private static final Scanner SCANNER = new Scanner(System.in);
-  private Socket clientSocket;
-  private ObjectOutputStream output;
-  private ObjectInputStream input;
+  private Socket serverSocket;
+  private ObjectOutputStream serverOutput;
+  private ObjectInputStream serverInput;
   private boolean running;
   private Thread inputThread;
   private Client client;
@@ -27,13 +27,13 @@ public class NetworkHandler extends Thread {
     setName("Client/NetworkHandler");
     this.client = client;
     try {
-      clientSocket = new Socket(ip, port);
+      serverSocket = new Socket(ip, port);
     } catch (IOException ex) {
       System.out.println("Couldn't connect to server, is it running?");
       return;
     }
-    output = new ObjectOutputStream(clientSocket.getOutputStream());
-    input = new ObjectInputStream(clientSocket.getInputStream());
+    serverOutput = new ObjectOutputStream(serverSocket.getOutputStream());
+    serverInput = new ObjectInputStream(serverSocket.getInputStream());
     running = true;
   }
 
@@ -51,7 +51,7 @@ public class NetworkHandler extends Thread {
         while (running) {
           Object object = null;
           try {
-            object = input.readObject();
+            object = serverInput.readObject();
           } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(NetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
           }
@@ -89,17 +89,17 @@ public class NetworkHandler extends Thread {
   }
 
   public void sendPacket(Packet packet) throws IOException {
-    output.writeObject(packet);
-    output.reset();
-    output.flush();
+    serverOutput.writeObject(packet);
+    serverOutput.reset();
+    serverOutput.flush();
   }
 
   public void disconnect() {
     try {
       sendPacket(new ClientDisconnectPacket());
-      output.close();
-      input.close();
-      clientSocket.close();
+      serverOutput.close();
+      serverInput.close();
+      serverSocket.close();
       running = false;
     } catch (IOException ex) {
       Logger.getLogger(NetworkHandler.class.getName()).log(Level.SEVERE, null, ex);

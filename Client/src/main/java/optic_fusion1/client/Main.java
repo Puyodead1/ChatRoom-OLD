@@ -1,7 +1,7 @@
 package optic_fusion1.client;
 
 import optic_fusion1.client.client.Client;
-import optic_fusion1.client.command.QuitCommand;
+import optic_fusion1.client.command.DisconnectCommand;
 import optic_fusion1.client.command.SetNickname;
 import optic_fusion1.commandsystem.CommandHandler;
 import optic_fusion1.commandsystem.command.Command;
@@ -17,7 +17,7 @@ public class Main extends Thread {
   }
 
   private void registerCommands() {
-    registerCommand(new QuitCommand("quit"));
+    registerCommand(new DisconnectCommand("quit"));
     registerCommand(new SetNickname("setnickname"));
   }
   

@@ -5,9 +5,9 @@ import optic_fusion1.client.client.Client;
 import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.commandsystem.command.CommandSender;
 
-public class QuitCommand extends Command {
+public class DisconnectCommand extends Command {
 
-  public QuitCommand(String name) {
+  public DisconnectCommand(String name) {
     super(name);
   }
 
