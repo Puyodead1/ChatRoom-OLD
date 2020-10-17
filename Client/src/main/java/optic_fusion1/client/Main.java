@@ -17,7 +17,7 @@ public class Main extends Thread {
   }
 
   private void registerCommands() {
-    registerCommand(new DisconnectCommand("quit"));
+    registerCommand(new DisconnectCommand("disconnect"));
     registerCommand(new SetNickname("setnickname"));
   }
   
