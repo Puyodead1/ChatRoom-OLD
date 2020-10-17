@@ -17,7 +17,7 @@ public final class Utils {
   public static void copy(String resource, String destination) {
     InputStream ddlStream = Main.class.getClassLoader().getResourceAsStream(resource);
     if (ddlStream == null) {
-//      LOGGER.warn(I18n.tl("resource_not_found", resource));
+      LOGGER.warn("The resource '" + resource + " can not be found");
       return;
     }
     try (FileOutputStream fos = new FileOutputStream(destination)) {
