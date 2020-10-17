@@ -75,10 +75,10 @@ public class ClientNetworkHandler extends Thread {
     output.close();
     input.close();
     socket.close();
-    running = false;
     server.removeClient(client.getUniqueId());
     socket = null;
     client = null;
+    running = false;
     try {
       join();
     } catch (InterruptedException ex) {

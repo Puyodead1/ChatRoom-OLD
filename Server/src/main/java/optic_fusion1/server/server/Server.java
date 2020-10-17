@@ -30,6 +30,11 @@ public class Server {
 
   public void startServer() {
     loadPropertiesFile();
+    startServerNetworkHandler();
+    running = true;
+  }
+
+  private void startServerNetworkHandler() {
     String serverIP = serverProperties.getProperty("server-ip");
     int serverPort = Integer.parseInt(serverProperties.getProperty("server-port", "25565"));
     InetAddress serverAddress = null;
@@ -44,7 +49,6 @@ public class Server {
     serverNetworkHandler = new ServerNetworkHandler(this, serverAddress, serverPort);
     LOGGER.info("Starting Server on " + ((serverIP.length() == 0) ? "*" : serverIP) + ":" + serverPort);
     serverNetworkHandler.start();
-    running = true;
   }
 
   private void loadPropertiesFile() {
