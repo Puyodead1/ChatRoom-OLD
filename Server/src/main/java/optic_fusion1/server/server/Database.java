@@ -33,7 +33,7 @@ public class Database {
     } catch (SQLException ex) {
       Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
     }
-    executePrepareStatement("CREATE TABLE IF NOT EXISTS \"users\" (\"user_name\" TEXT UNIQUE NOT NULL PRIMARY KEY, \"uuid\" BINARY(16) NOT NULL UNIQUE, \"pass\" CHAR(60) NOT NULL UNIQUE)");
+    executePrepareStatement("CREATE TABLE IF NOT EXISTS `users` (`user_name` TEXT UNIQUE NOT NULL PRIMARY KEY, `uuid` BINARY(16) NOT NULL UNIQUE, `pass` CHAR(60) NOT NULL UNIQUE)");
   }
 
   private void executePrepareStatement(String statement) {
@@ -44,7 +44,7 @@ public class Database {
     }
   }
 
-  private static final String INSERT_USER = "INSERT OR IGNORE INTO \"users\" (\"user_name\", \"uuid\", \"pass\") VALUES (?, ?, ?)";
+  private static final String INSERT_USER = "INSERT OR IGNORE INTO `users` (`user_name`, `uuid`, `pass`) VALUES (?, ?, ?)";
 
   public void insertUser(String userName, UUID uniqueId, String hashedPassword) {
     try {
@@ -58,7 +58,6 @@ public class Database {
     }
   }
 
-  //select * from table where field like '%a%' or field like '%b%'.
   private static final String CONTAINS_USER = "SELECT * FROM `users` WHERE `user_name` LIKE ?";
 
   public boolean containsUser(String userName) {
@@ -73,11 +72,11 @@ public class Database {
     return false;
   }
 
-  private static final String PASSWORD_ALREADY_SET = "SELECT pass FROM `users` WHERE `user_name` = ?";
+  private static final String GET_PASSWORD = "SELECT pass FROM `users` WHERE `user_name` = ?";
 
   public boolean isPasswordAlreadySet(String username) {
     try {
-      PreparedStatement statement = connection.prepareStatement(PASSWORD_ALREADY_SET);
+      PreparedStatement statement = connection.prepareStatement(GET_PASSWORD);
       statement.setString(1, username);
       ResultSet resultSet = statement.executeQuery();
       return resultSet.next();
@@ -87,15 +86,13 @@ public class Database {
     return false;
   }
 
-  private static final String PASSWORD_CORRECT = "SELECT pass FROM `users` WHERE `user_name` = ?";
-
   public boolean isPasswordCorrect(String username, String password) {
     try {
-      PreparedStatement statement = connection.prepareStatement(PASSWORD_CORRECT);
+      PreparedStatement statement = connection.prepareStatement(GET_PASSWORD);
       statement.setString(1, username);
       ResultSet resultSet = statement.executeQuery();
       boolean hasNext = resultSet.next();
-      if(hasNext){
+      if (hasNext) {
         return BCrypt.checkpw(password, resultSet.getString("pass"));
       }
     } catch (SQLException ex) {
