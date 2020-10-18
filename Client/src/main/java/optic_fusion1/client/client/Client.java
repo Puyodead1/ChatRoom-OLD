@@ -10,9 +10,9 @@ public class Client implements CommandSender {
 
   private NetworkHandler networkHandler;
 
-  public Client() {
+  public Client(String ip, int port) {
     try {
-      (networkHandler = new NetworkHandler(this, "127.0.0.1", 25565)).start();
+      (networkHandler = new NetworkHandler(this, ip, port)).start();
     } catch (IOException ex) {
       Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
     }
