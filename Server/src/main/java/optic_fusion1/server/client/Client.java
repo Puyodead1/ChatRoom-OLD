@@ -11,14 +11,16 @@ import optic_fusion1.server.server.network.ServerNetworkHandler;
 
 public class Client implements CommandSender {
 
-  private static final UUID uniqueId = UUID.randomUUID();
+  private static UUID uniqueId;
   private String nickname = "Client";
   private final ClientNetworkHandler clientNetworkHandler;
   private final int id;
   private boolean loggedIn;
+  private Server server;
 
   public Client(Server server, Socket socket, ServerNetworkHandler networkHandler, int id) throws IOException {
     this.id = id;
+    this.server = server;
     (clientNetworkHandler = new ClientNetworkHandler(server, this, socket, networkHandler)).start();
     nickname = "Client#" + id;
   }
@@ -26,10 +28,16 @@ public class Client implements CommandSender {
   public String getNickname() {
     return nickname;
   }
+  
+  public void setUniqueId(String username){
+    uniqueId = server.getDatabase().getUUID(username);
+  }
 
   public void setNickname(String nickname) {
-    LOGGER.info(this.nickname + "changed their name to " + nickname);
+    String oldNick = nickname;
     this.nickname = nickname;
+    server.getDatabase().updateNickname(uniqueId, nickname);
+    LOGGER.info(oldNick + "changed their name to " + nickname);
   }
 
   public UUID getUniqueId() {
@@ -43,13 +51,16 @@ public class Client implements CommandSender {
   public int getId() {
     return id;
   }
-  
-  public boolean isLoggedIn(){
+
+  public boolean isLoggedIn() {
     return loggedIn;
   }
-  
-  public void setLoggedIn(boolean loggedIn){
+
+  public void setLoggedIn(boolean loggedIn) {
     this.loggedIn = loggedIn;
+    if(!loggedIn){
+      uniqueId = null;
+    }
   }
 
 }

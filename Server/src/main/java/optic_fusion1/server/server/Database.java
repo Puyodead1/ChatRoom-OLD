@@ -33,7 +33,7 @@ public class Database {
     } catch (SQLException ex) {
       Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
     }
-    executePrepareStatement("CREATE TABLE IF NOT EXISTS `users` (`user_name` TEXT UNIQUE NOT NULL PRIMARY KEY, `uuid` BINARY(16) NOT NULL UNIQUE, `pass` CHAR(60) NOT NULL UNIQUE)");
+    executePrepareStatement("CREATE TABLE IF NOT EXISTS `users` (`username` TEXT UNIQUE NOT NULL PRIMARY KEY, `uuid` BINARY(16) NOT NULL UNIQUE, `pass` CHAR(60) NOT NULL UNIQUE, `nickname` TEXT UNIQUE NOT NULL DEFAULT `Client`)");
   }
 
   private void executePrepareStatement(String statement) {
@@ -44,7 +44,7 @@ public class Database {
     }
   }
 
-  private static final String INSERT_USER = "INSERT OR IGNORE INTO `users` (`user_name`, `uuid`, `pass`) VALUES (?, ?, ?)";
+  private static final String INSERT_USER = "INSERT OR IGNORE INTO `users` (`username`, `uuid`, `pass`) VALUES (?, ?, ?)";
 
   public void insertUser(String userName, UUID uniqueId, String hashedPassword) {
     try {
@@ -58,7 +58,7 @@ public class Database {
     }
   }
 
-  private static final String CONTAINS_USER = "SELECT * FROM `users` WHERE `user_name` LIKE ?";
+  private static final String CONTAINS_USER = "SELECT * FROM `users` WHERE `username` LIKE ?";
 
   public boolean containsUser(String userName) {
     try {
@@ -72,7 +72,23 @@ public class Database {
     return false;
   }
 
-  private static final String GET_PASSWORD = "SELECT pass FROM `users` WHERE `user_name` = ?";
+  private static final String GET_UUID = "SELECT uuid FROM `users` WHERE `username` = ?";
+
+  public UUID getUUID(String username) {
+    try {
+      PreparedStatement statement = connection.prepareStatement(GET_UUID);
+      statement.setString(1, username);
+      ResultSet resultSet = statement.executeQuery();
+      if(resultSet.next()){
+        return UUID.fromString(resultSet.getString("uuid"));
+      }
+    } catch (SQLException ex) {
+      Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return null;
+  }
+
+  private static final String GET_PASSWORD = "SELECT pass FROM `users` WHERE `username` = ?";
 
   public boolean isPasswordAlreadySet(String username) {
     try {
@@ -99,6 +115,20 @@ public class Database {
       Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
     }
     return false;
+  }
+
+  private static final String UPDATE_NICKNAME = "UPDATE users SET nickname=? WHERE uuid=?";
+
+  public void updateNickname(UUID uniqueId, String nickname) {
+    try {
+      PreparedStatement statement = connection.prepareStatement(UPDATE_NICKNAME);
+      statement.setString(1, nickname);
+      statement.setString(2, uniqueId.toString());
+      statement.execute();
+    } catch (SQLException ex) {
+      Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
   }
 
 }

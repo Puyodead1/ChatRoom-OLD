@@ -38,6 +38,7 @@ public class LoginCommand extends Command {
     if (database.isPasswordCorrect(userName, password)) {
       client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("You're now logged in"));
       client.setLoggedIn(true);
+      client.setUniqueId(userName);
       return true;
     }
     client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("Incorrect password"));

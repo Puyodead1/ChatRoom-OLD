@@ -88,7 +88,6 @@ public class NetworkHandler extends Thread {
               }
               continue;
             }
-            System.out.println("Ran the command " + nextLine);
             continue;
           }
           try {

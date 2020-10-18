@@ -48,7 +48,6 @@ public class ClientNetworkHandler extends Thread {
               client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("Couldn't run the command " + message.getMessage()));
               continue;
             }
-            client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("Successfully ran the command"));
             if(!message.getMessage().startsWith("/register") && !message.getMessage().startsWith("/login")){
               LOGGER.info(client.getNickname() + " ran the command " + message.getMessage());
             }
