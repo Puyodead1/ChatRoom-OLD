@@ -43,6 +43,13 @@ public class ClientNetworkHandler extends Thread {
         Object object = input.readObject();
         if (object instanceof ChatMessagePacket) {
           ChatMessagePacket message = (ChatMessagePacket) object;
+          if (message.getMessage().startsWith("/")) {
+            if (!server.getCommandHandler().executeCommand(client, message.getMessage().substring(1))) {
+              client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("Couldn't run the command " + message.getMessage()));
+              continue;
+            }
+            continue;
+          }
           LOGGER.info(client.getNickname() + " said " + message.getMessage());
           for (Client client : server.getClients()) {
             client.getClientNetworkHandler().sendPacket(message);
@@ -75,13 +82,13 @@ public class ClientNetworkHandler extends Thread {
   }
 
   public void disconnect() throws IOException {
+    running = false;
+    server.removeClient(client.getUniqueId());
     output.close();
     input.close();
     socket.close();
-    server.removeClient(client.getUniqueId());
     socket = null;
     client = null;
-    running = false;
     try {
       join();
     } catch (InterruptedException ex) {

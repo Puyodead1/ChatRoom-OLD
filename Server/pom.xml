@@ -17,6 +17,11 @@
             <artifactId>Packet</artifactId>
             <version>1</version>
         </dependency>
+        <dependency>
+            <groupId>optic_fusion1</groupId>
+            <artifactId>CommandSystem</artifactId>
+            <version>1</version>
+        </dependency>
     </dependencies>
     
     <build>

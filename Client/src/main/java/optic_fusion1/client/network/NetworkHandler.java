@@ -81,7 +81,11 @@ public class NetworkHandler extends Thread {
           if (nextLine.startsWith("/")) {
             nextLine = nextLine.substring(1);
             if (!COMMAND_HANDLER.executeCommand(client, nextLine)) {
-              System.out.println("Couldn't run the command " + nextLine);
+              try {
+                sendPacket(new ChatMessagePacket("/" + nextLine));
+              } catch (IOException ex) {
+                Logger.getLogger(NetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+              }
               continue;
             }
             System.out.println("Ran the command " + nextLine);
