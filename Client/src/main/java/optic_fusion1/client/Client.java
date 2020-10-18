@@ -2,6 +2,11 @@ package optic_fusion1.client;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Scanner;
+import optic_fusion1.client.command.DisconnectCommand;
+import optic_fusion1.client.command.SetNickname;
+import optic_fusion1.client.command.ShrugCommand;
+import optic_fusion1.client.network.ClientNetworkHandler;
 import optic_fusion1.commandsystem.CommandHandler;
 import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.commandsystem.command.CommandSender;
@@ -9,9 +14,11 @@ import optic_fusion1.commandsystem.command.CommandSender;
 public class Client extends Thread implements CommandSender {
 
   private static final CommandHandler COMMAND_HANDLER = new CommandHandler();
+  private static final Scanner SCANNER = new Scanner(System.in);
   private boolean running;
+  private ClientNetworkHandler clientNetworkHandler;
 
-  private Client() {
+  public Client() {
     setName("Client/Client");
     try {
       System.setOut(new PrintStream(System.out, true, "UTF-8"));
@@ -21,11 +28,28 @@ public class Client extends Thread implements CommandSender {
   }
 
   public void startClient() {
+    registerCommands();
+    requestServerCredentials();
     running = true;
   }
 
+  private void requestServerCredentials() {
+    System.out.println("Enter a server ip");
+    String serverIp = SCANNER.nextLine();
+    System.out.println("Enter a server port");
+    int port = 25565;
+    try {
+      port = SCANNER.nextInt();
+    } catch (Exception e) {
+
+    }
+    clientNetworkHandler = new ClientNetworkHandler(serverIp, port);
+  }
+
   private void registerCommands() {
-    
+    registerCommand(new DisconnectCommand("disconnect"));
+    registerCommand(new SetNickname("setnickname"));
+    registerCommand(new ShrugCommand("shrug"));
   }
 
   private void registerCommand(Command command) {
@@ -33,6 +57,7 @@ public class Client extends Thread implements CommandSender {
   }
 
   public void stopClient() {
+    running = false;
   }
 
 }

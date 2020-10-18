@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static optic_fusion1.client.Main.COMMAND_HANDLER;
 import optic_fusion1.client.client.Client;
 import optic_fusion1.packet.ChatMessagePacket;
 import optic_fusion1.packet.ClientDisconnectPacket;
@@ -79,14 +78,14 @@ public class NetworkHandler extends Thread {
           }
           if (nextLine.startsWith("/")) {
             nextLine = nextLine.substring(1);
-            if (!COMMAND_HANDLER.executeCommand(client, nextLine)) {
-              try {
-                sendPacket(new ChatMessagePacket("/" + nextLine));
-              } catch (IOException ex) {
-                disconnect();
-              }
-              continue;
-            }
+//            if (!COMMAND_HANDLER.executeCommand(client, nextLine)) {
+//              try {
+//                sendPacket(new ChatMessagePacket("/" + nextLine));
+//              } catch (IOException ex) {
+//                disconnect();
+//              }
+//              continue;
+//            }
             continue;
           }
           try {
