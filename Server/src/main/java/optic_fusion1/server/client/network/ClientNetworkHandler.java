@@ -44,11 +44,15 @@ public class ClientNetworkHandler extends Thread {
         if (object instanceof ChatMessagePacket) {
           ChatMessagePacket message = (ChatMessagePacket) object;
           if (message.getMessage().startsWith("/")) {
+            if (!client.isLoggedIn() && !message.getMessage().startsWith("/register") && !message.getMessage().startsWith("/login")) {
+              client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("You need to /login before you can run commands"));
+              continue;
+            }
             if (!server.getCommandHandler().executeCommand(client, message.getMessage().substring(1))) {
               client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("Couldn't run the command " + message.getMessage()));
               continue;
             }
-            if(!message.getMessage().startsWith("/register") && !message.getMessage().startsWith("/login")){
+            if (!message.getMessage().startsWith("/register") && !message.getMessage().startsWith("/login")) {
               LOGGER.info(client.getNickname() + " ran the command " + message.getMessage());
             }
             continue;
@@ -57,6 +61,10 @@ public class ClientNetworkHandler extends Thread {
           LOGGER.info(client.getNickname() + " said " + message.getMessage());
         }
         if (object instanceof ClientNicknameChangePacket) {
+          if (!client.isLoggedIn()) {
+            client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("You need to /login before you can set your nickname"));
+            continue;
+          }
           String nickname = ((ClientNicknameChangePacket) object).getNickName();
           if (server.isNicknameInUse(nickname)) {
             String message = "The nickname " + nickname + " is already being used";
