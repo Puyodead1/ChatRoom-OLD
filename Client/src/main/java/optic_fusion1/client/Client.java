@@ -43,7 +43,7 @@ public class Client extends Thread implements CommandSender {
     } catch (Exception e) {
 
     }
-    clientNetworkHandler = new ClientNetworkHandler(serverIp, port);
+    (clientNetworkHandler = new ClientNetworkHandler(this, serverIp, port)).start();
   }
 
   private void registerCommands() {
