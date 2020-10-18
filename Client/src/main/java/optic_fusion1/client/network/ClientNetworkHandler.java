@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -24,6 +25,7 @@ public class ClientNetworkHandler extends Thread {
   private boolean running;
   private ObjectOutputStream serverOutput;
   private ObjectInputStream serverInput;
+  private Scanner scanner;
 
   public ClientNetworkHandler(Client client, String serverIp, int port) {
     this.client = client;
@@ -31,6 +33,7 @@ public class ClientNetworkHandler extends Thread {
     this.port = port;
     reconnect();
     running = true;
+    scanner = client.getScanner();
   }
 
   public void reconnect() {
@@ -61,15 +64,24 @@ public class ClientNetworkHandler extends Thread {
   private void handleOutput() {
     executors.submit(() -> {
       while (running) {
-        try {
-          sendPacket(new ChatMessagePacket("HELLO WORLD!"));
-        } catch (IOException ex) {
-          retryCount++;
-          if (retryCount == 10) {
-            disconnect();
-            System.out.println("Couldn't re-connect");
-            return;
+        String input = scanner.nextLine();
+        if (input == null || input.isEmpty()) {
+          continue;
+        }
+        if (input.startsWith("/")) {
+          String command = input.substring(1);
+          if (!client.getCommandHandler().executeCommand(client, command)) {
+            try {
+              sendPacket(new ChatMessagePacket(command));
+            } catch (IOException ex) {
+              reconnect();
+            }
           }
+          continue;
+        }
+        try {
+          sendPacket(new ChatMessagePacket(input));
+        } catch (IOException ex) {
           reconnect();
         }
       }

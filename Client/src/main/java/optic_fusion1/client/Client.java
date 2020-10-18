@@ -15,7 +15,6 @@ public class Client extends Thread implements CommandSender {
 
   private static final CommandHandler COMMAND_HANDLER = new CommandHandler();
   private static final Scanner SCANNER = new Scanner(System.in);
-  private boolean running;
   private ClientNetworkHandler clientNetworkHandler;
 
   public Client() {
@@ -30,7 +29,6 @@ public class Client extends Thread implements CommandSender {
   public void startClient() {
     registerCommands();
     requestServerCredentials();
-    running = true;
   }
 
   private void requestServerCredentials() {
@@ -56,8 +54,12 @@ public class Client extends Thread implements CommandSender {
     COMMAND_HANDLER.addCommand(command);
   }
 
-  public void stopClient() {
-    running = false;
+  public CommandHandler getCommandHandler(){
+    return COMMAND_HANDLER;
+  }
+  
+  public Scanner getScanner() {
+    return SCANNER;
   }
 
 }
