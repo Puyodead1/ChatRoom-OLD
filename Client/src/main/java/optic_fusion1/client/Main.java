@@ -1,9 +1,12 @@
 package optic_fusion1.client;
 
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 import optic_fusion1.client.client.Client;
 import optic_fusion1.client.command.DisconnectCommand;
 import optic_fusion1.client.command.SetNickname;
+import optic_fusion1.client.command.ShrugCommand;
 import optic_fusion1.commandsystem.CommandHandler;
 import optic_fusion1.commandsystem.command.Command;
 
@@ -13,6 +16,12 @@ public class Main extends Thread {
 
   @Override
   public void run() {
+    try {
+      System.setOut(new PrintStream(System.out, true, "UTF-8"));
+    } catch (UnsupportedEncodingException e) {
+      throw new InternalError("VM does not support mandatory encoding UTF-8");
+    }
+
     registerCommands();
 
     Scanner scanner = new Scanner(System.in);
@@ -34,6 +43,7 @@ public class Main extends Thread {
   private void registerCommands() {
     registerCommand(new DisconnectCommand("disconnect"));
     registerCommand(new SetNickname("setnickname"));
+    registerCommand(new ShrugCommand("shrug"));
   }
 
   private void registerCommand(Command command) {

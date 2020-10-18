@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.time.LocalDate;
@@ -26,9 +27,14 @@ public class CustomLogger {
   private final BlockingQueue<String> toLog;
   private final String dateFormatted;
   private BufferedWriter fileWriter;
-  private final PrintStream outputStream = System.out;
+  private PrintStream outputStream = null;
 
   public CustomLogger() {
+    try {
+      this.outputStream = new PrintStream(System.out, true, "UTF-8");
+    } catch (UnsupportedEncodingException ex) {
+      outputStream = System.out;
+    }
     dateFormatted = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     logDirectory = new File("server", "logs");
     if (!logDirectory.exists()) {
