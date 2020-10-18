@@ -1,1 +1,1 @@
-Project to allow me to learn how to use sockets
+Very basic server/multi-client chat program
