@@ -51,12 +51,23 @@ public class ClientNetworkHandler extends Thread {
   @Override
   public void run() {
     handleOutput();
-//    handleInput();
+    handleInput();
   }
 
   private void handleInput() {
     executors.submit(() -> {
       while (running) {
+        try {
+          Object object = serverInput.readObject();
+          if (object == null) {
+            continue;
+          }
+          if (object instanceof ChatMessagePacket) {
+            System.out.println(((ChatMessagePacket) object).getMessage());
+          }
+        } catch (IOException | ClassNotFoundException ex) {
+          Logger.getLogger(ClientNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
       }
     });
   }
