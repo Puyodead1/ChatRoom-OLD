@@ -21,6 +21,7 @@ public class NetworkHandler extends Thread {
   private ObjectInputStream serverInput;
   private boolean running;
   private Thread inputThread;
+  private Thread outputThread;
   private Client client;
 
   public NetworkHandler(Client client, String ip, int port) throws IOException {
@@ -54,6 +55,7 @@ public class NetworkHandler extends Thread {
             object = serverInput.readObject();
           } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(NetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+            continue;
           }
           if (object == null) {
             continue;
@@ -68,24 +70,32 @@ public class NetworkHandler extends Thread {
   }
 
   private void handleOutput() {
-    while (running) {
-      String nextLine = SCANNER.nextLine();
-      if (nextLine == null || nextLine.isEmpty()) {
-        continue;
-      }
-      if (nextLine.startsWith("/")) {
-        nextLine = nextLine.substring(1);
-        if (!COMMAND_HANDLER.executeCommand(client, nextLine)) {
-          System.out.println("Couldn't run the command " + nextLine);
+    outputThread = new Thread() {
+      @Override
+      public void run() {
+        while (running) {
+          String nextLine = SCANNER.nextLine();
+          if (nextLine == null || nextLine.isEmpty()) {
+            continue;
+          }
+          if (nextLine.startsWith("/")) {
+            nextLine = nextLine.substring(1);
+            if (!COMMAND_HANDLER.executeCommand(client, nextLine)) {
+              System.out.println("Couldn't run the command " + nextLine);
+              continue;
+            }
+            System.out.println("Ran the command " + nextLine);
+            continue;
+          }
+          try {
+            sendPacket(new ChatMessagePacket(nextLine));
+          } catch (IOException ex) {
+            Logger.getLogger(NetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+          }
         }
-        return;
       }
-      try {
-        sendPacket(new ChatMessagePacket(nextLine));
-      } catch (IOException ex) {
-        Logger.getLogger(NetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
-      }
-    }
+    };
+    outputThread.start();
   }
 
   public void sendPacket(Packet packet) throws IOException {
