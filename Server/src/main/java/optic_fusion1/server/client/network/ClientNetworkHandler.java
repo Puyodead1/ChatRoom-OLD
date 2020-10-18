@@ -87,6 +87,7 @@ public class ClientNetworkHandler extends Thread {
     output.close();
     input.close();
     socket.close();
+    client.setLoggedIn(false);
     socket = null;
     client = null;
     try {

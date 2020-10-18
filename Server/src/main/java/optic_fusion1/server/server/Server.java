@@ -16,35 +16,40 @@ import optic_fusion1.commandsystem.CommandHandler;
 import optic_fusion1.commandsystem.command.Command;
 import static optic_fusion1.server.Main.LOGGER;
 import optic_fusion1.server.client.Client;
+import optic_fusion1.server.server.commands.LoginCommand;
+import optic_fusion1.server.server.commands.RegisterCommand;
 import optic_fusion1.server.server.network.ServerNetworkHandler;
 import optic_fusion1.server.utils.Utils;
 
 public class Server {
-  
+
+  private static final Database DATABASE = new Database();
   private static final CommandHandler COMMAND_HANDLER = new CommandHandler();
   private static final HashMap<UUID, Client> CLIENTS = new HashMap<>();
   private boolean running;
   private ServerNetworkHandler serverNetworkHandler;
   private Properties serverProperties = new Properties();
-  
+
   public Server() {
-    
+
   }
-  
+
   public void startServer() {
     running = true;
     loadPropertiesFile();
     startServerNetworkHandler();
     registerCommands();
   }
-  
+
   private void registerCommands() {
+    registerCommand(new RegisterCommand(this, "register"));
+    registerCommand(new LoginCommand(this, "login"));
   }
-  
+
   private void registerCommand(Command command) {
     COMMAND_HANDLER.addCommand(command);
   }
-  
+
   private void startServerNetworkHandler() {
     String serverIP = serverProperties.getProperty("server-ip");
     int serverPort = Integer.parseInt(serverProperties.getProperty("server-port", "25565"));
@@ -61,7 +66,7 @@ public class Server {
     LOGGER.info("Starting Server on " + ((serverIP.length() == 0) ? "*" : serverIP) + ":" + serverPort);
     serverNetworkHandler.start();
   }
-  
+
   private void loadPropertiesFile() {
     File file = new File("server", "server.properties");
     if (!file.exists()) {
@@ -75,37 +80,41 @@ public class Server {
       Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
-  
+
   public void stopServer() {
     running = false;
   }
-  
+
   public Collection<Client> getClients() {
     return CLIENTS.values();
   }
-  
+
   public Client getClient(UUID uniqueId) {
     return CLIENTS.get(uniqueId);
   }
-  
+
   public void addClient(Client client) {
     CLIENTS.putIfAbsent(client.getUniqueId(), client);
   }
-  
+
   public void removeClient(UUID uniqueId) {
     CLIENTS.remove(uniqueId);
   }
-  
+
   public boolean isNicknameInUse(String nickName) {
     return CLIENTS.values().stream().anyMatch(client -> (client.getNickname().equals(nickName)));
   }
-  
+
   public boolean isRunning() {
     return running;
   }
-  
+
   public CommandHandler getCommandHandler() {
     return COMMAND_HANDLER;
   }
   
+  public Database getDatabase(){
+    return DATABASE;
+  }
+
 }

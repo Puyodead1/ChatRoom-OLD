@@ -15,6 +15,7 @@ public class Client implements CommandSender {
   private String nickname = "Client";
   private final ClientNetworkHandler clientNetworkHandler;
   private final int id;
+  private boolean loggedIn;
 
   public Client(Server server, Socket socket, ServerNetworkHandler networkHandler, int id) throws IOException {
     this.id = id;
@@ -41,6 +42,14 @@ public class Client implements CommandSender {
 
   public int getId() {
     return id;
+  }
+  
+  public boolean isLoggedIn(){
+    return loggedIn;
+  }
+  
+  public void setLoggedIn(boolean loggedIn){
+    this.loggedIn = loggedIn;
   }
 
 }
