@@ -41,7 +41,6 @@ public class NetworkHandler extends Thread {
   @Override
   public void run() {
     handleOutput();
-    //TODO: Figure out why handleInput is broken
     handleInput();
   }
 
@@ -84,7 +83,7 @@ public class NetworkHandler extends Thread {
               try {
                 sendPacket(new ChatMessagePacket("/" + nextLine));
               } catch (IOException ex) {
-                Logger.getLogger(NetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+                disconnect();
               }
               continue;
             }
@@ -93,7 +92,7 @@ public class NetworkHandler extends Thread {
           try {
             sendPacket(new ChatMessagePacket(nextLine));
           } catch (IOException ex) {
-            Logger.getLogger(NetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+            disconnect();
           }
         }
       }
