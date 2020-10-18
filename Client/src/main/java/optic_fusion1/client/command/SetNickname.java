@@ -15,10 +15,14 @@ public class SetNickname extends Command {
 
   @Override
   public boolean execute(CommandSender sender, String commandLabel, List<String> args) {
+    if(args.isEmpty()){
+      System.out.println("/setnickname <nickname>");
+      return true;
+    }
     try {
       ((Client) sender).getNetworkHandler().sendPacket(new ClientNicknameChangePacket(args.get(0)));
     } catch (IOException ex) {
-      return false;
+      return true;
     }
     return true;
   }

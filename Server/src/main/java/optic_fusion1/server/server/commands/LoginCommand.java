@@ -20,6 +20,10 @@ public class LoginCommand extends Command {
   @Override
   public boolean execute(CommandSender sender, String commandLabel, List<String> args) {
     Client client = (Client) sender;
+    if (args.size() != 2) {
+      client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("/login <username> <password>"));
+      return true;
+    }
     if (client.isLoggedIn()) {
       client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("You're already logged in"));
       return true;
