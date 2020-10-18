@@ -10,8 +10,7 @@ public class Main extends Thread {
   @Override
   public void run() {
     setName("Server/Main");
-    Server server = new Server();
-    server.startServer();
+    new Server().startServer();
   }
 
   public static void main(String[] args) {

@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import optic_fusion1.commandsystem.CommandHandler;
 import optic_fusion1.commandsystem.command.Command;
+import optic_fusion1.packet.ChatMessagePacket;
 import static optic_fusion1.server.Main.LOGGER;
 import optic_fusion1.server.client.Client;
 import optic_fusion1.server.server.commands.LoginCommand;
@@ -105,6 +106,12 @@ public class Server {
     return CLIENTS.values().stream().anyMatch(client -> (client.getNickname().equals(nickName)));
   }
 
+  public void broadcastMessage(ChatMessagePacket message) {
+    CLIENTS.values().forEach(client -> {
+      client.getClientNetworkHandler().sendPacket(message);
+    });
+  }
+
   public boolean isRunning() {
     return running;
   }
@@ -112,8 +119,8 @@ public class Server {
   public CommandHandler getCommandHandler() {
     return COMMAND_HANDLER;
   }
-  
-  public Database getDatabase(){
+
+  public Database getDatabase() {
     return DATABASE;
   }
 

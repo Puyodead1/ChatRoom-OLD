@@ -50,10 +50,8 @@ public class ClientNetworkHandler extends Thread {
             }
             continue;
           }
+          server.broadcastMessage(message);
           LOGGER.info(client.getNickname() + " said " + message.getMessage());
-          for (Client client : server.getClients()) {
-            client.getClientNetworkHandler().sendPacket(message);
-          }
         }
         if (object instanceof ClientNicknameChangePacket) {
           String nickname = ((ClientNicknameChangePacket) object).getNickName();
