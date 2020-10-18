@@ -54,12 +54,16 @@ public class Client extends Thread implements CommandSender {
     COMMAND_HANDLER.addCommand(command);
   }
 
-  public CommandHandler getCommandHandler(){
+  public CommandHandler getCommandHandler() {
     return COMMAND_HANDLER;
   }
-  
+
   public Scanner getScanner() {
     return SCANNER;
+  }
+
+  public ClientNetworkHandler getNetworkHandler() {
+    return clientNetworkHandler;
   }
 
 }

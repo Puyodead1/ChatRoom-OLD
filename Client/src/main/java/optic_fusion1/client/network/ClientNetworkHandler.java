@@ -116,7 +116,7 @@ public class ClientNetworkHandler extends Thread {
       socket.close();
       executors.shutdown();
     } catch (IOException ex) {
-      Logger.getLogger(NetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(ClientNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
 

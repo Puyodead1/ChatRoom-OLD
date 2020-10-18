@@ -1,7 +1,7 @@
 package optic_fusion1.client.command;
 
 import java.util.List;
-import optic_fusion1.client.client.Client;
+import optic_fusion1.client.Client;
 import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.commandsystem.command.CommandSender;
 
