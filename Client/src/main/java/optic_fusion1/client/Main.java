@@ -14,6 +14,10 @@ public class Main extends Thread {
 
   public static final CommandHandler COMMAND_HANDLER = new CommandHandler();
 
+  public Main() {
+    setName("Client/Main");
+  }
+
   @Override
   public void run() {
     try {
