@@ -6,17 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import optic_fusion1.commandsystem.CommandHandler;
 import optic_fusion1.commandsystem.command.Command;
-import optic_fusion1.packet.ChatMessagePacket;
 import static optic_fusion1.server.Main.LOGGER;
-import optic_fusion1.server.client.Client;
+import optic_fusion1.server.client.ClientManager;
 import optic_fusion1.server.server.commands.LoginCommand;
 import optic_fusion1.server.server.commands.RegisterCommand;
 import optic_fusion1.server.server.network.ServerNetworkHandler;
@@ -24,12 +20,12 @@ import optic_fusion1.server.utils.Utils;
 
 public class Server {
 
+  private static final ClientManager CLIENT_MANAGER = new ClientManager();
   private static final Database DATABASE = new Database();
   private static final CommandHandler COMMAND_HANDLER = new CommandHandler();
-  private static final HashMap<UUID, Client> CLIENTS = new HashMap<>();
+  private static final Properties SERVER_PROPERTIES = new Properties();
   private boolean running;
   private ServerNetworkHandler serverNetworkHandler;
-  private Properties serverProperties = new Properties();
 
   public Server() {
 
@@ -52,8 +48,8 @@ public class Server {
   }
 
   private void startServerNetworkHandler() {
-    String serverIP = serverProperties.getProperty("server-ip");
-    int serverPort = Integer.parseInt(serverProperties.getProperty("server-port", "25565"));
+    String serverIP = SERVER_PROPERTIES.getProperty("server-ip");
+    int serverPort = Integer.parseInt(SERVER_PROPERTIES.getProperty("server-port", "25565"));
     InetAddress serverAddress = null;
     if (serverIP.length() > 0) {
       try {
@@ -74,7 +70,7 @@ public class Server {
       Utils.saveResource(new File("server"), "server.properties", false);
     }
     try {
-      serverProperties.load(new FileInputStream(file));
+      SERVER_PROPERTIES.load(new FileInputStream(file));
     } catch (FileNotFoundException ex) {
       Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
     } catch (IOException ex) {
@@ -84,32 +80,6 @@ public class Server {
 
   public void stopServer() {
     running = false;
-  }
-
-  public Collection<Client> getClients() {
-    return CLIENTS.values();
-  }
-
-  public Client getClient(UUID uniqueId) {
-    return CLIENTS.get(uniqueId);
-  }
-
-  public void addClient(Client client) {
-    CLIENTS.putIfAbsent(client.getUniqueId(), client);
-  }
-
-  public void removeClient(UUID uniqueId) {
-    CLIENTS.remove(uniqueId);
-  }
-
-  public boolean isNicknameInUse(String nickName) {
-    return CLIENTS.values().stream().anyMatch(client -> (client.getNickname().equals(nickName)));
-  }
-
-  public void broadcastMessage(ChatMessagePacket message) {
-    CLIENTS.values().forEach(client -> {
-      client.getClientNetworkHandler().sendPacket(message);
-    });
   }
 
   public boolean isRunning() {
@@ -122,6 +92,10 @@ public class Server {
 
   public Database getDatabase() {
     return DATABASE;
+  }
+  
+  public ClientManager getClientManager(){
+    return CLIENT_MANAGER;
   }
 
 }

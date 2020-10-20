@@ -12,6 +12,7 @@ import optic_fusion1.packet.ClientNicknameChangePacket;
 import optic_fusion1.packet.Packet;
 import static optic_fusion1.server.Main.LOGGER;
 import optic_fusion1.server.client.Client;
+import optic_fusion1.server.client.ClientManager;
 import optic_fusion1.server.server.Server;
 import optic_fusion1.server.server.network.ServerNetworkHandler;
 
@@ -24,6 +25,7 @@ public class ClientNetworkHandler extends Thread {
   private final ServerNetworkHandler networkHandler;
   private Client client;
   private Server server;
+  private ClientManager clientManager;
 
   public ClientNetworkHandler(Server server, Client client, Socket socket, ServerNetworkHandler networkHandler) throws IOException {
     setName("Server[Client:" + client.getId() + "]/NetworkHandler");
@@ -34,6 +36,7 @@ public class ClientNetworkHandler extends Thread {
     input = new ObjectInputStream(socket.getInputStream());
     running = true;
     this.server = server;
+    clientManager = server.getClientManager();
   }
 
   @Override
@@ -57,7 +60,7 @@ public class ClientNetworkHandler extends Thread {
             }
             continue;
           }
-          server.broadcastMessage(message);
+          clientManager.broadcastMessage(message);
           LOGGER.info(client.getNickname() + " said " + message.getMessage());
         }
         if (object instanceof ClientNicknameChangePacket) {
@@ -66,7 +69,7 @@ public class ClientNetworkHandler extends Thread {
             continue;
           }
           String nickname = ((ClientNicknameChangePacket) object).getNickName();
-          if (server.isNicknameInUse(nickname)) {
+          if (clientManager.isNicknameInUse(nickname)) {
             String message = "The nickname " + nickname + " is already being used";
             sendPacket(new ChatMessagePacket(message));
             LOGGER.info(message);
@@ -92,7 +95,7 @@ public class ClientNetworkHandler extends Thread {
 
   public void disconnect() throws IOException {
     running = false;
-    server.removeClient(client.getUniqueId());
+    clientManager.removeClient(client.getUniqueId());
     output.close();
     input.close();
     socket.close();

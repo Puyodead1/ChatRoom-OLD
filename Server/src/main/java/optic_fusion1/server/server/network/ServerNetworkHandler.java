@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static optic_fusion1.server.Main.LOGGER;
 import optic_fusion1.server.client.Client;
+import optic_fusion1.server.client.ClientManager;
 import optic_fusion1.server.server.Server;
 
 public class ServerNetworkHandler extends Thread {
@@ -15,10 +16,12 @@ public class ServerNetworkHandler extends Thread {
   private Server server;
   private ServerSocket serverSocket;
   private int currentClientID = 0;
+  private ClientManager clientManager;
 
   public ServerNetworkHandler(Server server, InetAddress address, int port) {
     setName("Server/ServerNetworkHandler");
     this.server = server;
+    this.clientManager = server.getClientManager();
     try {
       serverSocket = new ServerSocket(port, 0, address);
     } catch (IOException ex) {
@@ -37,7 +40,7 @@ public class ServerNetworkHandler extends Thread {
         }
         Client client = new Client(server, clientSocket, this, currentClientID);
         currentClientID++;
-        server.addClient(client);
+        clientManager.addClient(client);
         LOGGER.info("Client " + client.getId() + " connected");
       } catch (IOException ex) {
         Logger.getLogger(ServerNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
