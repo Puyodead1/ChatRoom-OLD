@@ -66,7 +66,13 @@ public class ClientNetworkHandler extends Thread {
             System.out.println(((ChatMessagePacket) object).getMessage());
           }
         } catch (IOException | ClassNotFoundException ex) {
-          Logger.getLogger(ClientNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+          retryCount++;
+          if (retryCount == 10) {
+            disconnect();
+            System.out.println("Couldn't re-connect");
+            return;
+          }
+          reconnect();
         }
       }
     });
@@ -85,6 +91,12 @@ public class ClientNetworkHandler extends Thread {
             try {
               sendPacket(new ChatMessagePacket(command));
             } catch (IOException ex) {
+              retryCount++;
+              if (retryCount == 10) {
+                disconnect();
+                System.out.println("Couldn't re-connect");
+                return;
+              }
               reconnect();
             }
           }
@@ -93,6 +105,12 @@ public class ClientNetworkHandler extends Thread {
         try {
           sendPacket(new ChatMessagePacket(input));
         } catch (IOException ex) {
+          retryCount++;
+          if (retryCount == 10) {
+            disconnect();
+            System.out.println("Couldn't re-connect");
+            return;
+          }
           reconnect();
         }
       }
