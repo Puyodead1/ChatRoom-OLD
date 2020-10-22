@@ -3,64 +3,83 @@ package optic_fusion1.server.client;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import optic_fusion1.commandsystem.command.CommandSender;
-import static optic_fusion1.server.Main.LOGGER;
+import optic_fusion1.server.Server;
+import static optic_fusion1.server.Server.LOGGER;
 import optic_fusion1.server.client.network.ClientNetworkHandler;
-import optic_fusion1.server.server.Server;
-import optic_fusion1.server.server.network.ServerNetworkHandler;
 
 public class Client implements CommandSender {
 
   private static UUID uniqueId;
-  private String nickname = "Client";
-  private final ClientNetworkHandler clientNetworkHandler;
-  private final int id;
-  private boolean loggedIn;
+  private int clientId;
   private Server server;
+  private Socket socket;
+  private boolean loggedIn;
+  private String nickname = "Client";
+  private String username = "";
+  private ClientNetworkHandler clientNetworkHandler;
 
-  public Client(Server server, Socket socket, ServerNetworkHandler networkHandler, int id) throws IOException {
-    this.id = id;
+  public Client(Server server, Socket socket, int clientId) {
     this.server = server;
-    (clientNetworkHandler = new ClientNetworkHandler(server, this, socket, networkHandler)).start();
-    nickname = "Client#" + id;
+    this.socket = socket;
+    this.clientId = clientId;
+    nickname = "Client#" + clientId;
+    try {
+      (clientNetworkHandler = new ClientNetworkHandler(server, this, socket)).start();
+    } catch (IOException ex) {
+      Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+    }
   }
 
-  public String getNickname() {
-    return nickname;
-  }
-  
-  public void setUniqueId(String username){
+  public void login(String username) {
+    this.username = username;
     uniqueId = server.getDatabase().getUUID(username);
   }
 
+  public void logout() {
+    username = "";
+    uniqueId = null;
+  }
+
   public void setNickname(String nickname) {
-    String oldNick = nickname;
+    String oldNickname = nickname;
     this.nickname = nickname;
     server.getDatabase().updateNickname(uniqueId, nickname);
-    LOGGER.info(oldNick + "changed their name to " + nickname);
+    LOGGER.info(oldNickname + " changed their name to " + nickname);
   }
 
-  public UUID getUniqueId() {
-    return uniqueId;
+  public int getClientId() {
+    return clientId;
   }
 
-  public ClientNetworkHandler getClientNetworkHandler() {
-    return clientNetworkHandler;
+  public Server getServer() {
+    return server;
   }
 
-  public int getId() {
-    return id;
+  public Socket getSocket() {
+    return socket;
   }
 
   public boolean isLoggedIn() {
     return loggedIn;
   }
 
-  public void setLoggedIn(boolean loggedIn) {
-    this.loggedIn = loggedIn;
-    if(!loggedIn){
-      uniqueId = null;
-    }
+  public String getNickname() {
+    return nickname;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public ClientNetworkHandler getClientNetworkHandler() {
+    return clientNetworkHandler;
+  }
+
+  public UUID getUniqueId() {
+    return uniqueId;
   }
 
 }

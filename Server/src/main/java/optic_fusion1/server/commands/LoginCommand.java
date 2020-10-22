@@ -1,12 +1,12 @@
-package optic_fusion1.server.server.commands;
+package optic_fusion1.server.commands;
 
 import java.util.List;
 import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.commandsystem.command.CommandSender;
 import optic_fusion1.packet.ChatMessagePacket;
+import optic_fusion1.server.Database;
+import optic_fusion1.server.Server;
 import optic_fusion1.server.client.Client;
-import optic_fusion1.server.server.Database;
-import optic_fusion1.server.server.Server;
 
 public class LoginCommand extends Command {
 
@@ -37,8 +37,7 @@ public class LoginCommand extends Command {
     }
     if (database.isPasswordCorrect(userName, password)) {
       client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("You're now logged in"));
-      client.setLoggedIn(true);
-      client.setUniqueId(userName);
+      client.login(userName);
       return true;
     }
     client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("Incorrect password"));

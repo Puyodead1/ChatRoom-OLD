@@ -1,4 +1,4 @@
-package optic_fusion1.server.server;
+package optic_fusion1.server;
 
 import java.io.File;
 import java.io.IOException;

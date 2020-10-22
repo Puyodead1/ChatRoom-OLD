@@ -1,19 +1,19 @@
-package optic_fusion1.server.server.network;
+package optic_fusion1.server.network;
 
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import static optic_fusion1.server.Main.LOGGER;
-import optic_fusion1.server.client.Client;
-import optic_fusion1.server.client.ClientManager;
-import optic_fusion1.server.server.Server;
+import optic_fusion1.server.Server;
 
 public class ServerNetworkHandler extends Thread {
 
   private Server server;
+
+  public ServerNetworkHandler(Server server, InetAddress address, int port) {
+    setName("Server/ServerNetworkHandler");
+    this.server = server;
+  }
+
+  /*
+   private Server server;
   private ServerSocket serverSocket;
   private int currentClientID = 0;
   private ClientManager clientManager;
@@ -47,5 +47,5 @@ public class ServerNetworkHandler extends Thread {
       }
     }
   }
-
+   */
 }

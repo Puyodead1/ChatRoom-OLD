@@ -10,86 +10,97 @@ import optic_fusion1.packet.ChatMessagePacket;
 import optic_fusion1.packet.ClientDisconnectPacket;
 import optic_fusion1.packet.ClientNicknameChangePacket;
 import optic_fusion1.packet.Packet;
-import static optic_fusion1.server.Main.LOGGER;
+import optic_fusion1.server.Server;
+import static optic_fusion1.server.Server.LOGGER;
 import optic_fusion1.server.client.Client;
 import optic_fusion1.server.client.ClientManager;
-import optic_fusion1.server.server.Server;
-import optic_fusion1.server.server.network.ServerNetworkHandler;
+import optic_fusion1.server.network.ServerNetworkHandler;
 
 public class ClientNetworkHandler extends Thread {
 
   private Socket socket;
-  private final ObjectOutputStream output;
-  private final ObjectInputStream input;
-  private boolean running;
-  private final ServerNetworkHandler networkHandler;
+  private ObjectOutputStream output;
+  private ObjectInputStream input;
+  private ServerNetworkHandler serverNetworkHandler;
   private Client client;
   private Server server;
   private ClientManager clientManager;
+  private boolean running;
 
-  public ClientNetworkHandler(Server server, Client client, Socket socket, ServerNetworkHandler networkHandler) throws IOException {
-    setName("Server[Client:" + client.getId() + "]/NetworkHandler");
+  public ClientNetworkHandler(Server server, Client client, Socket socket) throws IOException {
+    setName("Server[Client:" + client.getUsername() + "]/NetworkHandler");
+    this.server = server;
     this.client = client;
     this.socket = socket;
-    this.networkHandler = networkHandler;
+    this.serverNetworkHandler = server.getServerNetworkHandler();
     output = new ObjectOutputStream(socket.getOutputStream());
     input = new ObjectInputStream(socket.getInputStream());
-    running = true;
-    this.server = server;
     clientManager = server.getClientManager();
   }
 
   @Override
   public void run() {
+    running = true;
     while (running) {
       try {
         Object object = input.readObject();
+        if (object == null) {
+          continue;
+        }
         if (object instanceof ChatMessagePacket) {
-          ChatMessagePacket message = (ChatMessagePacket) object;
-          if (message.getMessage().startsWith("/")) {
-            if (!client.isLoggedIn() && !message.getMessage().startsWith("/register") && !message.getMessage().startsWith("/login")) {
-              client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("You need to /login before you can run commands"));
-              continue;
-            }
-            if (!server.getCommandHandler().executeCommand(client, message.getMessage().substring(1))) {
-              client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("Couldn't run the command " + message.getMessage()));
-              continue;
-            }
-            if (!message.getMessage().startsWith("/register") && !message.getMessage().startsWith("/login")) {
-              LOGGER.info(client.getNickname() + " ran the command " + message.getMessage());
-            }
-            continue;
-          }
-          clientManager.broadcastMessage(message);
-          LOGGER.info(client.getNickname() + " said " + message.getMessage());
+          handleChatMessagePacket((ChatMessagePacket) object);
+          continue;
         }
         if (object instanceof ClientNicknameChangePacket) {
-          if (!client.isLoggedIn()) {
-            client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("You need to /login before you can set your nickname"));
-            continue;
-          }
-          String nickname = ((ClientNicknameChangePacket) object).getNickName();
-          if (clientManager.isNicknameInUse(nickname)) {
-            String message = "The nickname " + nickname + " is already being used";
-            sendPacket(new ChatMessagePacket(message));
-            LOGGER.info(message);
-            continue;
-          }
-          client.setNickname(nickname);
-          sendPacket(new ChatMessagePacket("Your nickname has been set"));
-          LOGGER.info("Changed nickname to " + nickname);
+          handleClientNicknameChangePacket((ClientNicknameChangePacket) object);
         }
         if (object instanceof ClientDisconnectPacket) {
           disconnect();
         }
       } catch (IOException | ClassNotFoundException ex) {
-        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        try {
-          disconnect();
-        } catch (IOException ex1) {
-          Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex1);
-        }
+        Logger.getLogger(ClientNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
       }
+    }
+  }
+
+  private void handleClientNicknameChangePacket(ClientNicknameChangePacket packet) {
+    if (!client.isLoggedIn()) {
+      sendPacket(new ChatMessagePacket("You need to login before you can set your nickname"));
+      return;
+    }
+    String nickname = packet.getNickName();
+    if (clientManager.isNicknameInUse(nickname)) {
+      sendPacket(new ChatMessagePacket("The nickname " + nickname + " is already being used"));
+      LOGGER.info("Tried to change nickname to " + nickname + " but it's already being used");
+      return;
+    }
+    client.setNickname(nickname);
+    sendPacket(new ChatMessagePacket("Your nickname has successfully been changed to " + nickname));
+    LOGGER.info("Successfully changed nickname to " + nickname);
+  }
+
+  private void handleChatMessagePacket(ChatMessagePacket packet) {
+    String message = packet.getMessage();
+    if (message.startsWith("/")) {
+      handleCommand(message);
+      return;
+    }
+    clientManager.broadcastMessage(packet);
+    LOGGER.info(client.getNickname() + " said " + message);
+  }
+
+  private void handleCommand(String message) {
+    if (!client.isLoggedIn() && !message.startsWith("/register") && !message.startsWith("/login")) {
+      sendPacket(new ChatMessagePacket("You need to /login or /register before you can run commands"));
+      return;
+    }
+    if (!server.getCommandHandler().executeCommand(client, message)) {
+      sendPacket(new ChatMessagePacket("Couldn't run the command " + message));
+      return;
+    }
+    if (!message.startsWith("/register") && !message.startsWith("/login")) {
+      LOGGER.info(client.getUsername() + " ran the command " + message);
+      return;
     }
   }
 
@@ -99,7 +110,7 @@ public class ClientNetworkHandler extends Thread {
     output.close();
     input.close();
     socket.close();
-    client.setLoggedIn(false);
+    client.logout();
     socket = null;
     client = null;
     try {
@@ -118,5 +129,4 @@ public class ClientNetworkHandler extends Thread {
       Logger.getLogger(ClientNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
-
 }

@@ -1,13 +1,13 @@
-package optic_fusion1.server.server.commands;
+package optic_fusion1.server.commands;
 
 import java.util.List;
 import java.util.UUID;
 import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.commandsystem.command.CommandSender;
 import optic_fusion1.packet.ChatMessagePacket;
+import optic_fusion1.server.Database;
+import optic_fusion1.server.Server;
 import optic_fusion1.server.client.Client;
-import optic_fusion1.server.server.Database;
-import optic_fusion1.server.server.Server;
 import optic_fusion1.server.utils.BCrypt;
 
 public class RegisterCommand extends Command {
