@@ -29,6 +29,7 @@ public class Server extends Thread {
   private static final ClientManager CLIENT_MANAGER = new ClientManager();
   private ServerNetworkHandler serverNetworkHandler;
   private boolean running;
+  private InputHandler inputHandler;
 
   public Server() {
     setName("Server/Main");
@@ -42,6 +43,7 @@ public class Server extends Thread {
   @Override
   public void run() {
     running = true;
+    (inputHandler = new InputHandler(this)).start();
     loadPropertiesFile();
     registerCommands();
     startServerNetwork();

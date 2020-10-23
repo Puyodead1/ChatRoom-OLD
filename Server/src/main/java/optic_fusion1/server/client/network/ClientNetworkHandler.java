@@ -94,7 +94,7 @@ public class ClientNetworkHandler extends Thread {
       sendPacket(new ChatMessagePacket("You need to /login or /register before you can run commands"));
       return;
     }
-    if (!server.getCommandHandler().executeCommand(client, message)) {
+    if (!server.getCommandHandler().executeCommand(client, message.substring(1))) {
       sendPacket(new ChatMessagePacket("Couldn't run the command " + message));
       return;
     }
