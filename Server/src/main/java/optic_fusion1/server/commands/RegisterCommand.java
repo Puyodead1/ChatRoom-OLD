@@ -21,6 +21,10 @@ public class RegisterCommand extends Command {
 
   @Override
   public boolean execute(CommandSender sender, String commandLabel, List<String> args) {
+    if (sender instanceof ConsoleSender) {
+      System.out.println("Only clients can run this command");
+      return true;
+    }
     Client client = (Client) sender;
     if (args.size() != 2) {
       client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("/register <username> <password>"));
