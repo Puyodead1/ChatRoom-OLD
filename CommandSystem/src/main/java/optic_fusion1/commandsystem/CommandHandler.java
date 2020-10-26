@@ -27,13 +27,14 @@ public class CommandHandler {
   public boolean executeCommand(CommandSender sender, String message) {
     try {
       List<String> args = ShellParser.parseString(message);
-      if (args.isEmpty()) {
-        return false;
-      }
       String commandLabel = args.get(0);
       args.remove(0);
       Command command = getCommand(commandLabel);
       if (command == null) {
+        return false;
+      }
+      if (!command.checkArgLength(args)) {
+        sender.sendMessage("You did not enter enough arguments");
         return false;
       }
       return command.execute(sender, commandLabel, args);

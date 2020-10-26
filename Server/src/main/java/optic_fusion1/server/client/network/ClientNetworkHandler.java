@@ -58,7 +58,12 @@ public class ClientNetworkHandler extends Thread {
           disconnect();
         }
       } catch (IOException | ClassNotFoundException ex) {
-        Logger.getLogger(ClientNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+        System.out.println(client.isLoggedIn() ? client.getUsername() : client.getClientId() + " most likely lost connection");
+        try {
+          disconnect();
+        } catch (IOException ex1) {
+          Logger.getLogger(ClientNetworkHandler.class.getName()).log(Level.SEVERE, null, ex1);
+        }
       }
     }
   }
@@ -95,7 +100,6 @@ public class ClientNetworkHandler extends Thread {
       return;
     }
     if (!server.getCommandHandler().executeCommand(client, message.substring(1))) {
-      sendPacket(new ChatMessagePacket("Couldn't run the command " + message));
       return;
     }
     if (!message.startsWith("/register") && !message.startsWith("/login")) {

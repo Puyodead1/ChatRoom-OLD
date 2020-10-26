@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import optic_fusion1.commandsystem.command.CommandSender;
+import optic_fusion1.packet.ChatMessagePacket;
 import optic_fusion1.server.Server;
 import static optic_fusion1.server.Server.LOGGER;
 import optic_fusion1.server.client.network.ClientNetworkHandler;
@@ -36,11 +37,13 @@ public class Client implements CommandSender {
   public void login(String username) {
     this.username = username;
     uniqueId = server.getDatabase().getUUID(username);
+    loggedIn = true;
   }
 
   public void logout() {
     username = "";
     uniqueId = null;
+    loggedIn = false;
   }
 
   public void setNickname(String nickname) {
@@ -48,6 +51,11 @@ public class Client implements CommandSender {
     this.nickname = nickname;
     server.getDatabase().updateNickname(uniqueId, nickname);
     LOGGER.info(oldNickname + " changed their name to " + nickname);
+  }
+
+  @Override
+  public void sendMessage(String message) {
+    clientNetworkHandler.sendPacket(new ChatMessagePacket(message));
   }
 
   public int getClientId() {

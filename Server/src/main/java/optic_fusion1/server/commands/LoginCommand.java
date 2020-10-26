@@ -15,6 +15,7 @@ public class LoginCommand extends Command {
   public LoginCommand(Server server, String name) {
     super(name);
     this.server = server;
+    setArgLength(2, 2);
   }
 
   @Override

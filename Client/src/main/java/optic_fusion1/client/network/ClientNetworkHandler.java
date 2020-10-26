@@ -31,12 +31,12 @@ public class ClientNetworkHandler extends Thread {
     this.client = client;
     this.serverIp = serverIp;
     this.port = port;
-    reconnect();
+    connect();
     running = true;
     scanner = client.getScanner();
   }
 
-  public void reconnect() {
+  public void connect() {
     try {
       socket = new Socket(serverIp, port);
       serverOutput = new ObjectOutputStream(socket.getOutputStream());
@@ -46,6 +46,16 @@ public class ClientNetworkHandler extends Thread {
     } catch (IOException ex) {
       System.out.println("Couldn't connect to the server, is it running?");
     }
+  }
+
+  private void reconnect() {
+    retryCount++;
+    if (retryCount == 10) {
+      disconnect();
+      System.out.println("Couldn't re-connect");
+      return;
+    }
+    reconnect();
   }
 
   @Override
@@ -66,12 +76,6 @@ public class ClientNetworkHandler extends Thread {
             System.out.println(((ChatMessagePacket) object).getMessage());
           }
         } catch (IOException | ClassNotFoundException ex) {
-          retryCount++;
-          if (retryCount == 10) {
-            disconnect();
-            System.out.println("Couldn't re-connect");
-            return;
-          }
           reconnect();
         }
       }
@@ -89,14 +93,8 @@ public class ClientNetworkHandler extends Thread {
           String command = input.substring(1);
           if (!client.getCommandHandler().executeCommand(client, command)) {
             try {
-              sendPacket(new ChatMessagePacket(command));
+              sendPacket(new ChatMessagePacket(input));
             } catch (IOException ex) {
-              retryCount++;
-              if (retryCount == 10) {
-                disconnect();
-                System.out.println("Couldn't re-connect");
-                return;
-              }
               reconnect();
             }
           }
@@ -105,12 +103,6 @@ public class ClientNetworkHandler extends Thread {
         try {
           sendPacket(new ChatMessagePacket(input));
         } catch (IOException ex) {
-          retryCount++;
-          if (retryCount == 10) {
-            disconnect();
-            System.out.println("Couldn't re-connect");
-            return;
-          }
           reconnect();
         }
       }

@@ -54,6 +54,11 @@ public class Client extends Thread implements CommandSender {
     COMMAND_HANDLER.addCommand(command);
   }
 
+  @Override
+  public void sendMessage(String message) {
+    System.out.println(message);
+  }
+
   public CommandHandler getCommandHandler() {
     return COMMAND_HANDLER;
   }

@@ -17,6 +17,7 @@ public class RegisterCommand extends Command {
   public RegisterCommand(Server server, String name) {
     super(name);
     this.server = server;
+    setArgLength(2, 2);
   }
 
   @Override
