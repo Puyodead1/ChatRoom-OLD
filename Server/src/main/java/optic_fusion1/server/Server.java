@@ -16,6 +16,9 @@ import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.server.client.ClientManager;
 import optic_fusion1.server.commands.LoginCommand;
 import optic_fusion1.server.commands.RegisterCommand;
+import optic_fusion1.server.input.InputHandler;
+import optic_fusion1.server.input.impl.JlineInputHandler;
+import optic_fusion1.server.input.impl.SimpleInputHandler;
 import optic_fusion1.server.logging.CustomLogger;
 import optic_fusion1.server.network.ServerNetworkHandler;
 import optic_fusion1.server.utils.Utils;
@@ -43,10 +46,19 @@ public class Server extends Thread {
   @Override
   public void run() {
     running = true;
-    (inputHandler = new InputHandler(this)).start();
+    setInputHandler();
     loadPropertiesFile();
     registerCommands();
     startServerNetwork();
+  }
+
+  private void setInputHandler() {
+    try {
+      inputHandler = new JlineInputHandler(this);
+    } catch (IOException ex) {
+      inputHandler = new SimpleInputHandler(this);
+    }
+    inputHandler.start();
   }
 
   public void stopServer() {
@@ -98,42 +110,6 @@ public class Server extends Thread {
     serverNetworkHandler.start();
   }
 
-  /*
-   private static final ClientManager CLIENT_MANAGER = new ClientManager();
-  private ServerNetworkHandler serverNetworkHandler;
-
-
-  private void startServerNetworkHandler() {
-    String serverIP = SERVER_PROPERTIES.getProperty("server-ip");
-    int serverPort = Integer.parseInt(SERVER_PROPERTIES.getProperty("server-port", "25565"));
-    InetAddress serverAddress = null;
-    if (serverIP.length() > 0) {
-      try {
-        serverAddress = InetAddress.getByName(serverIP);
-      } catch (UnknownHostException ex) {
-        LOGGER.exception(ex);
-        serverAddress = null;
-      }
-    }
-    serverNetworkHandler = new ServerNetworkHandler(this, serverAddress, serverPort);
-    LOGGER.info("Starting Server on " + ((serverIP.length() == 0) ? "*" : serverIP) + ":" + serverPort);
-    serverNetworkHandler.start();
-  }
-
-  private void loadPropertiesFile() {
-    File file = new File("server", "server.properties");
-    if (!file.exists()) {
-      Utils.saveResource(new File("server"), "server.properties", false);
-    }
-    try {
-      SERVER_PROPERTIES.load(new FileInputStream(file));
-    } catch (FileNotFoundException ex) {
-      Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-      Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-    }
-  }
-   */
   public Database getDatabase() {
     return DATABASE;
   }
@@ -149,8 +125,8 @@ public class Server extends Thread {
   public ClientManager getClientManager() {
     return CLIENT_MANAGER;
   }
-  
-  public CommandHandler getCommandHandler(){
+
+  public CommandHandler getCommandHandler() {
     return COMMAND_HANDLER;
   }
 

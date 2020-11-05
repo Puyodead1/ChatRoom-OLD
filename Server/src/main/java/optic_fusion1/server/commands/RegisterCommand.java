@@ -15,7 +15,7 @@ public class RegisterCommand extends Command {
   private Server server;
 
   public RegisterCommand(Server server, String name) {
-    super(name);
+    super(name, 0x0);
     this.server = server;
     setArgLength(2, 2);
   }
