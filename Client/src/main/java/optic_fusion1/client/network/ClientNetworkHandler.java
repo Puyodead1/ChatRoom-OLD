@@ -130,4 +130,12 @@ public class ClientNetworkHandler extends Thread {
     }
   }
 
+  public void setServerIp(String serverIp) {
+    this.serverIp = serverIp;
+  }
+
+  public void setPort(int port) {
+    this.port = port;
+  }
+
 }

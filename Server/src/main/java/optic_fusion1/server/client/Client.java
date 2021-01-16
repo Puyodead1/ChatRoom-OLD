@@ -18,7 +18,7 @@ public class Client implements CommandSender {
   private Server server;
   private Socket socket;
   private boolean loggedIn;
-  private String nickname = "Client";
+  private String nickname = "";
   private String username = "";
   private ClientNetworkHandler clientNetworkHandler;
 
@@ -26,7 +26,6 @@ public class Client implements CommandSender {
     this.server = server;
     this.socket = socket;
     this.clientId = clientId;
-    nickname = "Client#" + clientId;
     try {
       (clientNetworkHandler = new ClientNetworkHandler(server, this, socket)).start();
     } catch (IOException ex) {
@@ -38,16 +37,18 @@ public class Client implements CommandSender {
     this.username = username;
     uniqueId = server.getDatabase().getUUID(username);
     loggedIn = true;
+    server.getClientManager().addClient(this);
   }
 
   public void logout() {
     username = "";
     uniqueId = null;
     loggedIn = false;
+    server.getClientManager().removeClient(uniqueId);
   }
 
   public void setNickname(String nickname) {
-    String oldNickname = nickname;
+    String oldNickname = this.nickname.isEmpty() ? username : this.nickname;
     this.nickname = nickname;
     server.getDatabase().updateNickname(uniqueId, nickname);
     LOGGER.info(oldNickname + " changed their name to " + nickname);
@@ -56,6 +57,10 @@ public class Client implements CommandSender {
   @Override
   public void sendMessage(String message) {
     clientNetworkHandler.sendPacket(new ChatMessagePacket(message));
+  }
+
+  public void sendMessage(Client target, String message) {
+    target.getClientNetworkHandler().sendPacket(new ChatMessagePacket(getEffectiveName() + ": " + message));
   }
 
   public int getClientId() {
@@ -88,6 +93,10 @@ public class Client implements CommandSender {
 
   public UUID getUniqueId() {
     return uniqueId;
+  }
+
+  public String getEffectiveName() {
+    return nickname.isEmpty() ? username : nickname;
   }
 
 }

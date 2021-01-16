@@ -40,12 +40,15 @@ public class ServerNetworkHandler extends Thread {
         }
         Client client = new Client(server, clientSocket, currentClientID);
         currentClientID++;
-        clientManager.addClient(client);
-        LOGGER.info("Client " + client.getClientId() + " connected");
+        LOGGER.info("Client " + client.getClientId() + " connected IP:" + client.getSocket().getInetAddress().getHostAddress());
       } catch (IOException ex) {
         Logger.getLogger(ServerNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
+  }
+
+  public ClientManager getClientManager() {
+    return clientManager;
   }
 
 }

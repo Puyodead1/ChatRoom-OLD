@@ -33,7 +33,7 @@ public class Database {
     } catch (SQLException ex) {
       Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
     }
-    executePrepareStatement("CREATE TABLE IF NOT EXISTS `users` (`username` TEXT UNIQUE NOT NULL PRIMARY KEY, `uuid` BINARY(16) NOT NULL UNIQUE, `pass` CHAR(60) NOT NULL UNIQUE, `nickname` TEXT UNIQUE NOT NULL DEFAULT `Client`)");
+    executePrepareStatement("CREATE TABLE IF NOT EXISTS `users` (`username` TEXT NOT NULL PRIMARY KEY, `uuid` BINARY(16) NOT NULL, `pass` CHAR(60) NOT NULL, `nickname` TEXT NOT NULL DEFAULT `Client`)");
   }
 
   private void executePrepareStatement(String statement) {

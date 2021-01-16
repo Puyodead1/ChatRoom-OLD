@@ -90,8 +90,13 @@ public class ClientNetworkHandler extends Thread {
       handleCommand(message);
       return;
     }
-    clientManager.broadcastMessage(packet);
-    LOGGER.info(client.getNickname() + " said " + message);
+    if (!client.isLoggedIn()) {
+      client.sendMessage("You need to be logged in to chat");
+      return;
+    }
+    //Possibly a better way of doing this
+    clientManager.broadcastMessage(new ChatMessagePacket(client.getEffectiveName() + ": " + message));
+    LOGGER.info(client.getEffectiveName() + " said " + message);
   }
 
   private void handleCommand(String message) {
@@ -110,7 +115,6 @@ public class ClientNetworkHandler extends Thread {
 
   public void disconnect() throws IOException {
     running = false;
-    clientManager.removeClient(client.getUniqueId());
     output.close();
     input.close();
     socket.close();

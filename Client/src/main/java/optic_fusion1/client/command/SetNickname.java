@@ -10,7 +10,7 @@ import optic_fusion1.packet.ClientNicknameChangePacket;
 public class SetNickname extends Command {
 
   public SetNickname(String name) {
-    super(name);
+    super(name, 0x0);
   }
 
   @Override

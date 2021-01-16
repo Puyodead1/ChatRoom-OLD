@@ -18,6 +18,15 @@ public class ClientManager {
     return CLIENTS.get(uuid);
   }
 
+  public Client getClientWithUsername(String username) {
+    for (Client client : CLIENTS.values()) {
+      if (client.getUsername().equals(username)) {
+        return client;
+      }
+    }
+    return null;
+  }
+
   public void addClient(Client client) {
     CLIENTS.put(client.getUniqueId(), client);
   }

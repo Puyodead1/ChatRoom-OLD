@@ -12,7 +12,7 @@ import optic_fusion1.packet.ChatMessagePacket;
 public class ShrugCommand extends Command {
 
   public ShrugCommand(String name) {
-    super(name);
+    super(name, 0x0);
   }
 
   @Override

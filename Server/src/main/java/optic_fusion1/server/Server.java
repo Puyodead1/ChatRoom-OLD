@@ -9,11 +9,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import optic_fusion1.commandsystem.CommandHandler;
 import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.server.client.ClientManager;
+import optic_fusion1.server.commands.DMCommand;
 import optic_fusion1.server.commands.LoginCommand;
 import optic_fusion1.server.commands.RegisterCommand;
 import optic_fusion1.server.input.InputHandler;
@@ -25,6 +28,7 @@ import optic_fusion1.server.utils.Utils;
 
 public class Server extends Thread {
 
+  private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
   public static final CustomLogger LOGGER = new CustomLogger();
   private static final Database DATABASE = new Database();
   private static final CommandHandler COMMAND_HANDLER = new CommandHandler();
@@ -87,6 +91,7 @@ public class Server extends Thread {
   private void registerCommands() {
     registerCommand(new LoginCommand(this, "login"));
     registerCommand(new RegisterCommand(this, "register"));
+    registerCommand(new DMCommand("dm"));
   }
 
   private void registerCommand(Command command) {
@@ -130,4 +135,8 @@ public class Server extends Thread {
     return COMMAND_HANDLER;
   }
 
+  public ScheduledExecutorService getExecutorService(){
+    return EXECUTOR_SERVICE;
+  }
+  
 }

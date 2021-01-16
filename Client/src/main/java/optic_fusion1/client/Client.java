@@ -3,6 +3,7 @@ package optic_fusion1.client;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
+import optic_fusion1.client.command.ConnectCommand;
 import optic_fusion1.client.command.DisconnectCommand;
 import optic_fusion1.client.command.SetNickname;
 import optic_fusion1.client.command.ShrugCommand;
@@ -48,6 +49,7 @@ public class Client extends Thread implements CommandSender {
     registerCommand(new DisconnectCommand("disconnect"));
     registerCommand(new SetNickname("setnickname"));
     registerCommand(new ShrugCommand("shrug"));
+    registerCommand(new ConnectCommand("connect"));
   }
 
   private void registerCommand(Command command) {

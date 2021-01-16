@@ -8,7 +8,7 @@ import optic_fusion1.commandsystem.command.CommandSender;
 public class DisconnectCommand extends Command {
 
   public DisconnectCommand(String name) {
-    super(name);
+    super(name, 0x0);
   }
 
   @Override
