@@ -132,6 +132,5 @@ dependency-reduced-pom.xml
 # Manifest
 META-INF/
 
-server/logs
-server/database.db
-server/server.properties
+#Server
+/server/
