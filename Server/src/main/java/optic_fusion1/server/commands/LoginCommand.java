@@ -14,7 +14,6 @@ public class LoginCommand extends Command {
 
   private Server server;
   private int loginAttempts;
-  private long timestamp;
 
   public LoginCommand(Server server, String name) {
     super(name, 0x0);
@@ -25,7 +24,7 @@ public class LoginCommand extends Command {
   @Override
   public boolean execute(CommandSender sender, String commandLabel, List<String> args) {
     if (sender instanceof ConsoleSender) {
-      System.out.println("Only clients can run this command");
+      LOGGER.info("Only clients can run this command");
       return true;
     }
     Client client = (Client) sender;
@@ -59,7 +58,6 @@ public class LoginCommand extends Command {
     LOGGER.info(client.getClientId() + " tried to login with the username " + userName + " but go the password wrong");
     loginAttempts++;
     if (loginAttempts == 3) {
-      timestamp = System.currentTimeMillis();
       server.getExecutorService().schedule(() -> {
         loginAttempts = 0;
         client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("You can try to login again"));

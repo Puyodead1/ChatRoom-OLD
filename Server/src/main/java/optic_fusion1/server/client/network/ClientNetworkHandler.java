@@ -62,7 +62,7 @@ public class ClientNetworkHandler extends Thread {
         try {
           disconnect();
         } catch (IOException ex1) {
-          Logger.getLogger(ClientNetworkHandler.class.getName()).log(Level.SEVERE, null, ex1);
+          LOGGER.exception(ex);
         }
       }
     }
@@ -124,7 +124,7 @@ public class ClientNetworkHandler extends Thread {
     try {
       join();
     } catch (InterruptedException ex) {
-      Logger.getLogger(ClientNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
   }
 
@@ -134,7 +134,7 @@ public class ClientNetworkHandler extends Thread {
       output.reset();
       output.flush();
     } catch (IOException ex) {
-      Logger.getLogger(ClientNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
   }
 }

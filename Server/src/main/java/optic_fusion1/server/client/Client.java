@@ -3,8 +3,6 @@ package optic_fusion1.server.client;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import optic_fusion1.commandsystem.command.CommandSender;
 import optic_fusion1.packet.ChatMessagePacket;
 import optic_fusion1.server.Server;
@@ -29,7 +27,7 @@ public class Client implements CommandSender {
     try {
       (clientNetworkHandler = new ClientNetworkHandler(server, this, socket)).start();
     } catch (IOException ex) {
-      Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
   }
 

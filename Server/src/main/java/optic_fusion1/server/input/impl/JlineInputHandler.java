@@ -10,9 +10,6 @@ import org.jline.reader.MaskingCallback;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
-/*
-TODO: Example on this as needed, see the example here https://github.com/jline/jline3/blob/master/builtins/src/test/java/org/jline/example/Example.java
-*/
 public class JlineInputHandler extends InputHandler {
 
   private TerminalBuilder builder;

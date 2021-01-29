@@ -9,14 +9,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import optic_fusion1.commandsystem.CommandHandler;
 import optic_fusion1.commandsystem.command.Command;
+import optic_fusion1.packet.ChatMessagePacket;
+import optic_fusion1.server.client.Client;
 import optic_fusion1.server.client.ClientManager;
 import optic_fusion1.server.commands.DMCommand;
+import optic_fusion1.server.commands.GenAccCommand;
 import optic_fusion1.server.commands.LoginCommand;
 import optic_fusion1.server.commands.RegisterCommand;
 import optic_fusion1.server.input.InputHandler;
@@ -24,6 +26,7 @@ import optic_fusion1.server.input.impl.JlineInputHandler;
 import optic_fusion1.server.input.impl.SimpleInputHandler;
 import optic_fusion1.server.logging.CustomLogger;
 import optic_fusion1.server.network.ServerNetworkHandler;
+import optic_fusion1.server.utils.BCrypt;
 import optic_fusion1.server.utils.Utils;
 
 public class Server extends Thread {
@@ -70,7 +73,7 @@ public class Server extends Thread {
     try {
       join();
     } catch (InterruptedException ex) {
-      Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
   }
 
@@ -82,9 +85,9 @@ public class Server extends Thread {
     try {
       SERVER_PROPERTIES.load(new FileInputStream(file));
     } catch (FileNotFoundException ex) {
-      Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     } catch (IOException ex) {
-      Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
   }
 
@@ -92,6 +95,7 @@ public class Server extends Thread {
     registerCommand(new LoginCommand(this, "login"));
     registerCommand(new RegisterCommand(this, "register"));
     registerCommand(new DMCommand("dm"));
+    registerCommand(new GenAccCommand(this, "genacc"));
   }
 
   private void registerCommand(Command command) {
@@ -115,6 +119,18 @@ public class Server extends Thread {
     serverNetworkHandler.start();
   }
 
+  public boolean createAccount(Client client, String userName, String password) {
+    if (DATABASE.containsUser(userName)) {
+      client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("The username '" + userName + "' is already taken"));
+      LOGGER.info(userName + " is already set");
+      return false;
+    }
+    DATABASE.insertUser(userName, UUID.randomUUID(), BCrypt.hashpw(password, BCrypt.gensalt()));
+    client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("Registed the username " + userName));
+    LOGGER.info("Registered username " + userName);
+    return true;
+  }
+
   public Database getDatabase() {
     return DATABASE;
   }
@@ -135,8 +151,8 @@ public class Server extends Thread {
     return COMMAND_HANDLER;
   }
 
-  public ScheduledExecutorService getExecutorService(){
+  public ScheduledExecutorService getExecutorService() {
     return EXECUTOR_SERVICE;
   }
-  
+
 }

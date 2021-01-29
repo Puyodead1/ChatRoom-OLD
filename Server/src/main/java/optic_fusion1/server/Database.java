@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static optic_fusion1.server.Server.LOGGER;
 import optic_fusion1.server.utils.BCrypt;
 
 public class Database {
@@ -25,13 +26,13 @@ public class Database {
       try {
         file.createNewFile();
       } catch (IOException ex) {
-        Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        LOGGER.exception(ex);
       }
     }
     try {
       connection = DriverManager.getConnection("jdbc:sqlite:" + file.toURI());
     } catch (SQLException ex) {
-      Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
     executePrepareStatement("CREATE TABLE IF NOT EXISTS `users` (`username` TEXT NOT NULL PRIMARY KEY, `uuid` BINARY(16) NOT NULL, `pass` CHAR(60) NOT NULL, `nickname` TEXT NOT NULL DEFAULT `Client`)");
   }
@@ -40,7 +41,7 @@ public class Database {
     try {
       connection.prepareStatement(statement).execute();
     } catch (SQLException ex) {
-      Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
   }
 
@@ -54,7 +55,7 @@ public class Database {
       statement.setString(3, hashedPassword);
       statement.execute();
     } catch (SQLException ex) {
-      Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
   }
 
@@ -67,7 +68,7 @@ public class Database {
       ResultSet resultSet = statement.executeQuery();
       return resultSet.next();
     } catch (SQLException ex) {
-      Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
     return false;
   }
@@ -79,11 +80,11 @@ public class Database {
       PreparedStatement statement = connection.prepareStatement(GET_UUID);
       statement.setString(1, username);
       ResultSet resultSet = statement.executeQuery();
-      if(resultSet.next()){
+      if (resultSet.next()) {
         return UUID.fromString(resultSet.getString("uuid"));
       }
     } catch (SQLException ex) {
-      Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
     return null;
   }
@@ -97,7 +98,7 @@ public class Database {
       ResultSet resultSet = statement.executeQuery();
       return resultSet.next();
     } catch (SQLException ex) {
-      Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
     return false;
   }
@@ -112,7 +113,7 @@ public class Database {
         return BCrypt.checkpw(password, resultSet.getString("pass"));
       }
     } catch (SQLException ex) {
-      Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
     return false;
   }
@@ -126,9 +127,8 @@ public class Database {
       statement.setString(2, uniqueId.toString());
       statement.execute();
     } catch (SQLException ex) {
-      Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
-
   }
 
 }

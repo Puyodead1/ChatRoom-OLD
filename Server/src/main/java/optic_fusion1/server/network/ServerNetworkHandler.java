@@ -25,7 +25,7 @@ public class ServerNetworkHandler extends Thread {
     try {
       serverSocket = new ServerSocket(port, 0, address);
     } catch (IOException ex) {
-      Logger.getLogger(ServerNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.exception(ex);
     }
     LOGGER.info("Started a server on port " + port);
   }
@@ -42,7 +42,7 @@ public class ServerNetworkHandler extends Thread {
         currentClientID++;
         LOGGER.info("Client " + client.getClientId() + " connected IP:" + client.getSocket().getInetAddress().getHostAddress());
       } catch (IOException ex) {
-        Logger.getLogger(ServerNetworkHandler.class.getName()).log(Level.SEVERE, null, ex);
+        LOGGER.exception(ex);
       }
     }
   }
