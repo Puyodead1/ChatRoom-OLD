@@ -15,8 +15,8 @@ public abstract class InputHandler extends Thread {
   public Server getServer() {
     return server;
   }
-  
-  public ConsoleSender getConsoleSender(){
+
+  public ConsoleSender getConsoleSender() {
     return CONSOLE_SENDER;
   }
 

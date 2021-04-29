@@ -15,7 +15,7 @@ public class SetNickname extends Command {
 
   @Override
   public boolean execute(CommandSender sender, String commandLabel, List<String> args) {
-    if(args.isEmpty()){
+    if (args.isEmpty()) {
       System.out.println("/setnickname <nickname>");
       return true;
     }
