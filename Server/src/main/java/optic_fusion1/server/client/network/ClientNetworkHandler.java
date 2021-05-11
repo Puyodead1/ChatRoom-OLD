@@ -28,7 +28,7 @@ public class ClientNetworkHandler extends Thread {
   private boolean running;
 
   public ClientNetworkHandler(Server server, Client client, Socket socket) throws IOException {
-    setName("Server[Client:" + client.getUsername() + "]/NetworkHandler");
+    setName("Client[" + client.getUsername() + "]/NetworkHandler");
     this.server = server;
     this.client = client;
     this.socket = socket;

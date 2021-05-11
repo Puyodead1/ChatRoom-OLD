@@ -12,8 +12,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import me.legrange.haveibeenpwned.HaveIBeenPwndApi;
 import me.legrange.haveibeenpwned.HaveIBeenPwndBuilder;
 import me.legrange.haveibeenpwned.HaveIBeenPwndException;
