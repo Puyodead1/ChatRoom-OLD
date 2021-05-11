@@ -134,7 +134,7 @@ public class Server extends Thread {
       HaveIBeenPwndApi hibp = HaveIBeenPwndBuilder.create("HaveIBeenPwnd").build();
       try {
         if (hibp.isPlainPasswordPwned(password)) {
-          client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("The password '" + password + "' is insecure use something else"));
+          client.getClientNetworkHandler().sendPacket(new ChatMessagePacket("The password is insecure use something else"));
           return false;
         }
       } catch (HaveIBeenPwndException ex) {
