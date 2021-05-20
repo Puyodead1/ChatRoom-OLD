@@ -96,6 +96,11 @@
       <artifactId>haveibeenpwned</artifactId>
       <version>3.0</version>
     </dependency>
+    <dependency>
+      <groupId>optic_fusion1</groupId>
+      <artifactId>EventSystem</artifactId>
+      <version>1</version>
+    </dependency>
   </dependencies>
     
   <properties>

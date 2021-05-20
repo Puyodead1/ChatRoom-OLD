@@ -8,10 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import static optic_fusion1.server.Server.LOGGER;
-import optic_fusion1.server.utils.BCrypt;
+import static optic_fusion1.server.network.SocketServer.LOGGER;
+import optic_fusion1.utils.BCrypt;
 
 public class Database {
 
