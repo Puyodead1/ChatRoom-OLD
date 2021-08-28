@@ -36,7 +36,6 @@ public class PacketListener implements ServerEventListener {
   public void onPacketReceive(ClientConnection client, IPacket packet) {
     if (packet instanceof MessagePacket) {
       String message = ((MessagePacket) packet).getMessage();
-      System.out.println(message);
       if (message.startsWith("/")) {
         EventManager.call(new CommandEvent(client, message.substring(1)));
         return;

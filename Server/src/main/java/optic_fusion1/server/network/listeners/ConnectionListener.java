@@ -37,7 +37,6 @@ public class ConnectionListener implements ServerEventListener {
 
   @Override
   public void onSocketPreConnect(ClientConnection client) {
-    System.out.println("GOT A PRECONNECT");
   }
 
   @Override

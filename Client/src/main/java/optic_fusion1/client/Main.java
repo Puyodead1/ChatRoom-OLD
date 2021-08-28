@@ -19,6 +19,7 @@ package optic_fusion1.client;
 
 import optic_fusion1.client.network.SocketClient;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import optic_fusion1.client.network.listeners.PacketListener;
@@ -28,7 +29,10 @@ import optic_fusion1.packets.impl.MessagePacket;
 public class Main {
 
   public static void main(String[] args) {
-    SocketClient client = new SocketClient("localhost", 25565, false);
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("Input an ip and port (e.g. localhost 25565)");
+    String[] values = scanner.nextLine().split(" ");
+    SocketClient client = new SocketClient(values[0], Integer.parseInt(values[1]), false);
     client.getPacketRegister().addPacket("message", MessagePacket.class);
     client.getPacketRegister().addPacket("heartbeat", HeartBeatPacket.class);
     client.addEventListener(new PacketListener());
