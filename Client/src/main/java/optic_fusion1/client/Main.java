@@ -13,10 +13,10 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.client;
 
+import optic_fusion1.client.logging.CustomLogger;
 import optic_fusion1.client.network.SocketClient;
 import java.io.IOException;
 import java.util.Scanner;
@@ -28,9 +28,11 @@ import optic_fusion1.packets.impl.MessagePacket;
 
 public class Main {
 
+  public static final CustomLogger LOGGER = new CustomLogger();
+
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
-    System.out.println("Input an ip and port (e.g. localhost 25565)");
+    LOGGER.info("Input an ip and port (e.g. localhost 25565)");
     String[] values = scanner.nextLine().split(" ");
     SocketClient client = new SocketClient(values[0], Integer.parseInt(values[1]), false);
     client.getPacketRegister().addPacket("message", MessagePacket.class);

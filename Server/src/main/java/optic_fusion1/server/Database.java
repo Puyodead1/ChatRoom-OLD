@@ -26,7 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 import static optic_fusion1.server.network.SocketServer.LOGGER;
-import optic_fusion1.utils.BCrypt;
+import optic_fusion1.server.utils.BCrypt;
 
 public class Database {
 

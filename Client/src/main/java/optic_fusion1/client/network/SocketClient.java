@@ -81,7 +81,7 @@ public class SocketClient implements CommandSender {
         try {
           int packetLength = this.dataInputStream.readInt();
           if (packetLength > this.maxPacketSize) {
-            System.err.println("Server packet is over max size of " + this.maxPacketSize);
+            optic_fusion1.client.Main.LOGGER.warn("Server packet is over max size of " + maxPacketSize);
             try {
               dataInputStream.skipBytes(packetLength);
             } catch (Exception e) {

@@ -20,7 +20,7 @@ package optic_fusion1.server.commands;
 import java.util.List;
 import optic_fusion1.server.network.ClientConnection;
 import optic_fusion1.server.network.SocketServer;
-import optic_fusion1.utils.RandomString;
+import optic_fusion1.server.utils.RandomString;
 import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.commandsystem.command.CommandSender;
 

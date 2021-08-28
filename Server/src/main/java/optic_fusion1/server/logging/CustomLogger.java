@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package optic_fusion1.logging;
+package optic_fusion1.server.logging;
 
 import java.io.BufferedWriter;
 import java.io.File;

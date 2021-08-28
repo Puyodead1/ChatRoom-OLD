@@ -68,7 +68,7 @@
   <dependencies>
     <dependency>
       <groupId>optic_fusion1</groupId>
-      <artifactId>Packet</artifactId>
+      <artifactId>PacketSystem</artifactId>
       <version>1</version>
     </dependency>
     <dependency>

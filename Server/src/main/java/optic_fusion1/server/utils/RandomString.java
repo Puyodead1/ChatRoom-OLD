@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package optic_fusion1.utils;
+package optic_fusion1.server.utils;
 
 import java.security.SecureRandom;
 import java.util.Locale;

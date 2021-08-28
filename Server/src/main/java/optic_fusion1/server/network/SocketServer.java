@@ -50,10 +50,10 @@ import optic_fusion1.server.commands.RegisterCommand;
 import optic_fusion1.server.network.listeners.ServerEventListener;
 import optic_fusion1.commandsystem.CommandHandler;
 import optic_fusion1.commandsystem.command.Command;
-import optic_fusion1.logging.CustomLogger;
+import optic_fusion1.server.logging.CustomLogger;
 import optic_fusion1.server.commands.GenAccCommand;
-import optic_fusion1.utils.BCrypt;
-import optic_fusion1.utils.Utils;
+import optic_fusion1.server.utils.BCrypt;
+import optic_fusion1.server.utils.Utils;
 
 public class SocketServer {
 
