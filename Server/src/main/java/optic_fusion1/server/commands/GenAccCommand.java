@@ -29,7 +29,7 @@ public class GenAccCommand extends Command{
   private SocketServer server;
   
   public GenAccCommand(SocketServer server){
-    super("genacc", 0x0);
+    super("genacc");
     this.server = server;
   }
   

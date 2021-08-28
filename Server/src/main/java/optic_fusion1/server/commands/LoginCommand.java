@@ -33,7 +33,7 @@ public class LoginCommand extends Command {
   private Database database;
   
   public LoginCommand(SocketServer server) {
-    super("login", 0x0);
+    super("login");
     this.server = server;
     database = server.getDatabase();
   }

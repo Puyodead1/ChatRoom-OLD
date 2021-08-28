@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.server.commands;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class RegisterCommand extends Command {
   private SocketServer server;
 
   public RegisterCommand(SocketServer server) {
-    super("register", 0x0);
+    super("register");
     this.server = server;
   }
 

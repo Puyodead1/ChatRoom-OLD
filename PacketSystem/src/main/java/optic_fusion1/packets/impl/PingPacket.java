@@ -17,10 +17,10 @@
 
 package optic_fusion1.packets.impl;
 
-import optic_fusion1.packets.IPacket;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import optic_fusion1.packets.IPacket;
+
 import java.io.IOException;
 
 public class PingPacket implements IPacket {

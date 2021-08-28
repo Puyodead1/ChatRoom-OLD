@@ -13,40 +13,17 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.packets;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class ListPacket extends SimplePacket {
+public interface IPacket {
 
-  private final List<Object> list;
+  void writePacketData(DataOutputStream dataOutputStream) throws IOException;
 
-  public ListPacket() {
-    this.list = new ArrayList<>();
-  }
-
-  public ListPacket(final Object... objects) {
-    this();
-
-    Collections.addAll(this.list, objects);
-  }
-
-  public List<Object> getList() {
-    return this.list;
-  }
-
-  @Override
-  public void writePacketData(List<Object> list) {
-    list.addAll(this.list);
-  }
-
-  @Override
-  public void readPacketData(List<Object> list) {
-    this.list.addAll(list);
-  }
+  void readPacketData(DataInputStream dataInputStream) throws IOException;
 
 }

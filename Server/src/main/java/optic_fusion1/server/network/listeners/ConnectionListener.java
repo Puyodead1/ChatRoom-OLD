@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.server.network.listeners;
 
 import optic_fusion1.server.network.ClientConnection;
@@ -34,6 +33,11 @@ public class ConnectionListener implements ServerEventListener {
     if (server.isLoginRequired() && !client.isLoggedIn()) {
       client.sendMessage("You need to login before you're able to talk here");
     }
+  }
+
+  @Override
+  public void onSocketPreConnect(ClientConnection client) {
+    System.out.println("GOT A PRECONNECT");
   }
 
   @Override

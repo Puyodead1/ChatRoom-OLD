@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.server;
 
 import optic_fusion1.server.network.SocketServer;
@@ -26,12 +25,14 @@ import optic_fusion1.packets.impl.MessagePacket;
 import optic_fusion1.server.network.listeners.PacketListener;
 import optic_fusion1.server.network.listeners.event.CommandEventListener;
 import net.lenni0451.asmevents.EventManager;
+import optic_fusion1.packets.impl.HeartBeatPacket;
 
 public class Main {
 
   public static void main(String[] args) {
     SocketServer server = new SocketServer();
     server.getPacketRegister().addPacket("message", MessagePacket.class);
+    server.getPacketRegister().addPacket("heartbeat", HeartBeatPacket.class);
     server.addEventListener(new PacketListener(server));
     server.addEventListener(new ConnectionListener(server));
     EventManager.register(new CommandEventListener(server.getCommandHandler()));
@@ -41,5 +42,5 @@ public class Main {
       Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
-  
+
 }

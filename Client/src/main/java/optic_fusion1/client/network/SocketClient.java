@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.client.network;
 
 import optic_fusion1.client.network.listeners.ClientEventListener;
@@ -30,17 +29,19 @@ import java.security.PublicKey;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import optic_fusion1.commandsystem.CommandHandler;
-import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.commandsystem.command.CommandSender;
 import optic_fusion1.packets.PacketRegister;
+import optic_fusion1.packets.impl.HeartBeatPacket;
 import optic_fusion1.packets.impl.MessagePacket;
 import optic_fusion1.packets.impl.PingPacket;
 import optic_fusion1.packets.utils.RSACrypter;
 
 public class SocketClient implements CommandSender {
 
-  private static final CommandHandler COMMAND_HANDLER = new CommandHandler();
   private final String ip;
   private final int port;
   private Socket socket;
@@ -68,7 +69,6 @@ public class SocketClient implements CommandSender {
 
     this.eventListener = new CopyOnWriteArrayList<>();
     this.packetRegister = new PacketRegister();
-    registerCommands();
   }
 
   public void connect() throws IOException {
@@ -300,14 +300,8 @@ public class SocketClient implements CommandSender {
       this.sendRawPacket(baos.toByteArray());
     } catch (Exception e) {
       new IOException("Could not serialize packet", e).printStackTrace();
+      disconnect();
     }
-  }
-
-  private void registerCommands() {
-  }
-
-  private void registerCommand(Command command) {
-    COMMAND_HANDLER.addCommand(command);
   }
 
   @Override

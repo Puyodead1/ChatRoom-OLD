@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.packets;
 
 import java.util.ArrayList;
@@ -37,10 +36,7 @@ public class PacketRegister {
 
   private void registerDefaults() {
     //System packets:
-    this.packetTypes.put('\0' + "PingPacket", PingPacket.class);
-
-    //Other packets
-    this.packetTypes.put("ListPacket", ListPacket.class);
+    this.packetTypes.put('\0' + "PingPacket", PingPacket.class);  
   }
 
   public void addPacket(final String label, final Class<? extends IPacket> packetClass) {

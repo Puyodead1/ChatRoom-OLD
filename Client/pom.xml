@@ -10,6 +10,7 @@
     
   <artifactId>Client</artifactId>
   <packaging>jar</packaging>
+  <version>1</version>
     
   <dependencies>
     <dependency>
