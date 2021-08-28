@@ -29,6 +29,7 @@ import java.security.PublicKey;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
+import static optic_fusion1.client.Main.LOGGER;
 import optic_fusion1.commandsystem.command.CommandSender;
 import optic_fusion1.packets.PacketRegister;
 import optic_fusion1.packets.impl.MessagePacket;
@@ -81,7 +82,7 @@ public class SocketClient implements CommandSender {
         try {
           int packetLength = this.dataInputStream.readInt();
           if (packetLength > this.maxPacketSize) {
-            optic_fusion1.client.Main.LOGGER.warn("Server packet is over max size of " + maxPacketSize);
+            LOGGER.warn("Server packet is over max size of " + maxPacketSize);
             try {
               dataInputStream.skipBytes(packetLength);
             } catch (Exception e) {
@@ -301,7 +302,7 @@ public class SocketClient implements CommandSender {
 
   @Override
   public void sendMessage(String message) {
-    System.out.println(message);
+    LOGGER.info(message);
   }
 
   public void handleInput() {
