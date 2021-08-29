@@ -26,6 +26,8 @@ import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.commandsystem.command.CommandSender;
 import optic_fusion1.packets.impl.MessagePacket;
 
+import static optic_fusion1.server.Main.LOGGER;
+
 public class LoginCommand extends Command {
   
   private int loginAttempts = 0;
@@ -42,31 +44,32 @@ public class LoginCommand extends Command {
   public boolean execute(CommandSender sender, String commandLabel, List<String> args) {
     ClientConnection client = (ClientConnection) sender;
     if (loginAttempts == 3) {
-      client.sendMessage("You need to wait 10 seconds before trying to login again");
+      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "[Login] You need to wait 10 seconds before trying to login again", MessagePacket.MessageChatType.SYSTEM));
       return true;
     }
     if (args.size() != 2) {
-      client.sendMessage("/login <username> <password>");
+      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "[Login] Usage: /login <username> <password>", MessagePacket.MessageChatType.SYSTEM));
       return true;
     }
     if (client.isLoggedIn()) {
-      client.sendMessage("You're already logged in");
+      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "[Login] You are already logged in", MessagePacket.MessageChatType.SYSTEM));
       return true;
     }
     String username = args.get(0);
     String password = args.get(1);
     if (!database.containsUser(username)) {
-      client.sendMessage("The username " + username + " doesn't exist");
+      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "[Login] Invalid username or password", MessagePacket.MessageChatType.SYSTEM));
       ratelimit(client);
       return true;
     }
     if (!database.isPasswordCorrect(username, password)) {
-      client.sendMessage("Incorrect username or password");
+      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "[Login] Invalid username or password", MessagePacket.MessageChatType.SYSTEM));
       ratelimit(client);
       return true;
     }
     client.login(username);
-    server.broadcastPacket(new MessagePacket(MessagePacket.Type.SYSTEM, username + " has logged in"));
+    LOGGER.info(username + " has logged in from " + client.getAddress());
+    server.broadcastPacket(new MessagePacket(MessagePacket.MessagePacketType.LOGIN, username, MessagePacket.MessageChatType.SYSTEM));
     return true;
   }
   
@@ -75,7 +78,7 @@ public class LoginCommand extends Command {
     if (loginAttempts == 3) {
       server.getExecutorService().schedule(() -> {
         loginAttempts = 0;
-        client.sendMessage("You can try to login again");
+        client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "You can try to login again", MessagePacket.MessageChatType.SYSTEM));
       }, 10, TimeUnit.SECONDS);
     }
   }

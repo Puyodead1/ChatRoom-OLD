@@ -307,7 +307,10 @@ public class SocketClient implements CommandSender {
   public void handleInput() {
     Scanner scanner = new Scanner(System.in);
     while (isConnected()) {
-      sendPacket(new MessagePacket(scanner.nextLine()));
+      String msg = scanner.nextLine();
+      // prevent sending empty messages
+      if(msg.isEmpty()) continue;
+      sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, msg, MessagePacket.MessageChatType.USER));
     }
   }
 

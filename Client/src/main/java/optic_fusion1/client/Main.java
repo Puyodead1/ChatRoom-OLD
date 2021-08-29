@@ -32,8 +32,8 @@ public class Main {
 
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
-    LOGGER.info("Input an ip and port (e.g. localhost 25565)");
-    String[] values = scanner.nextLine().split(" ");
+    LOGGER.info("Input an ip and port (e.g. localhost:25565)");
+    String[] values = scanner.nextLine().split(":");
     SocketClient client = new SocketClient(values[0], Integer.parseInt(values[1]), false);
     client.getPacketRegister().addPacket("message", MessagePacket.class);
     client.getPacketRegister().addPacket("heartbeat", HeartBeatPacket.class);

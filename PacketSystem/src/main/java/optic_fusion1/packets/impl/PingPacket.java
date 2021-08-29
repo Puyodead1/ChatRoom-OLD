@@ -28,6 +28,7 @@ public class PingPacket implements IPacket {
   private long systemTime;
 
   public PingPacket() {
+
   }
 
   public PingPacket(final long systemTime) {

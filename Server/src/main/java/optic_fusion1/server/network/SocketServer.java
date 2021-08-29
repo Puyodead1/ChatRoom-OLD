@@ -19,6 +19,7 @@ package optic_fusion1.server.network;
 
 import optic_fusion1.packets.IPacket;
 import optic_fusion1.packets.PacketRegister;
+import optic_fusion1.packets.impl.MessagePacket;
 import optic_fusion1.packets.impl.PingPacket;
 import optic_fusion1.packets.utils.RSACrypter;
 
@@ -50,10 +51,11 @@ import optic_fusion1.server.commands.RegisterCommand;
 import optic_fusion1.server.network.listeners.ServerEventListener;
 import optic_fusion1.commandsystem.CommandHandler;
 import optic_fusion1.commandsystem.command.Command;
-import optic_fusion1.server.logging.CustomLogger;
 import optic_fusion1.server.commands.GenAccCommand;
 import optic_fusion1.server.utils.BCrypt;
 import optic_fusion1.server.utils.Utils;
+
+import static optic_fusion1.server.Main.LOGGER;
 
 public class SocketServer {
 
@@ -71,7 +73,6 @@ public class SocketServer {
   private static final CommandHandler COMMAND_HANDLER = new CommandHandler();
   private static final Properties SERVER_PROPERTIES = new Properties();
   private static final Database DATABASE = new Database();
-  public static final CustomLogger LOGGER = new CustomLogger();
   private boolean loginRequired = true;
   private String serverIP = "";
   private boolean allowInsecurePasswords = false;
@@ -349,7 +350,7 @@ public class SocketServer {
 
   public boolean createAccount(ClientConnection client, String userName, String password) {
     if (DATABASE.containsUser(userName)) {
-      client.sendMessage("The username '" + userName + "' is already taken");
+      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "The username '" + userName + "' is already taken", MessagePacket.MessageChatType.SYSTEM));
       LOGGER.info(userName + " is already set");
       return false;
     }
@@ -357,7 +358,7 @@ public class SocketServer {
       HaveIBeenPwndApi hibp = HaveIBeenPwndBuilder.create("HaveIBeenPwnd").build();
       try {
         if (hibp.isPlainPasswordPwned(password)) {
-          client.sendMessage("The password is insecure use something else");
+          client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "The password is insecure use something else", MessagePacket.MessageChatType.SYSTEM));
           return false;
         }
       } catch (HaveIBeenPwndException ex) {
@@ -365,7 +366,7 @@ public class SocketServer {
       }
     }
     DATABASE.insertUser(userName, UUID.randomUUID(), BCrypt.hashpw(password, BCrypt.gensalt()));
-    client.sendMessage("Registed the username " + userName);
+    client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "Registered the username " + userName, MessagePacket.MessageChatType.SYSTEM));
     LOGGER.info("Registered username " + userName);
     return true;
   }

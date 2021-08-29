@@ -20,6 +20,8 @@ import optic_fusion1.server.network.ClientConnection;
 import optic_fusion1.server.network.SocketServer;
 import optic_fusion1.packets.impl.MessagePacket;
 
+import static optic_fusion1.server.Main.LOGGER;
+
 public class ConnectionListener implements ServerEventListener {
 
   private SocketServer server;
@@ -30,8 +32,9 @@ public class ConnectionListener implements ServerEventListener {
 
   @Override
   public void onSocketConnectionEstablished(ClientConnection client) {
+    LOGGER.info("New connection from " + client.getAddress());
     if (server.isLoginRequired() && !client.isLoggedIn()) {
-      client.sendMessage("You need to login before you're able to talk here");
+      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "You need to login before you can talk here", MessagePacket.MessageChatType.SYSTEM));
     }
   }
 
@@ -41,7 +44,8 @@ public class ConnectionListener implements ServerEventListener {
 
   @Override
   public void onSocketDisconnect(ClientConnection client) {
-    server.broadcastPacket(new MessagePacket(client.getUsername() + " has disconnected"));
+    LOGGER.info(client.isLoggedIn() ? client.getUsername() : " A user" + " disconnected from " + client.getAddress());
+    server.broadcastPacket(new MessagePacket(MessagePacket.MessagePacketType.DISCONNECT, client.getUsername(), MessagePacket.MessageChatType.SYSTEM));
   }
 
 }

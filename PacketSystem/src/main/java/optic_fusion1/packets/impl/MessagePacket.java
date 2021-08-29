@@ -20,33 +20,50 @@ package optic_fusion1.packets.impl;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import optic_fusion1.packets.IPacket;
 
 public class MessagePacket implements IPacket {
 
+  private MessagePacketType packetType;
+  private MessageChatType chatType;
   private String message;
-  private Type type;
 
   public MessagePacket() {
 
   }
 
-  public MessagePacket(String message) {
-    this(Type.NORMAL, message);
-  }
-
-  public MessagePacket(Type type, String message) {
-    this.type = type;
+  public MessagePacket(MessagePacketType packetType, String message, MessageChatType chatType) {
+    this.packetType = packetType;
     this.message = message;
+    this.chatType = chatType;
   }
 
-  public enum Type {
-    SYSTEM("System: "),
-    NORMAL("");
+  public enum MessagePacketType {
+    LOGIN("LOGIN"),
+    DISCONNECT("DISCONNECT"),
+    CHAT("CHAT");
 
-    private String name;
+    private final String name;
 
-    Type(String name) {
+    MessagePacketType(String name) {
+      this.name = name;
+    }
+
+    public String getName() {
+      return name;
+    }
+  }
+
+  public enum MessageChatType {
+    USER("USER"),
+    SYSTEM("SYSTEM");
+
+    private final String name;
+
+    MessageChatType(String name) {
       this.name = name;
     }
 
@@ -57,16 +74,40 @@ public class MessagePacket implements IPacket {
 
   @Override
   public void writePacketData(DataOutputStream dataOutputStream) throws IOException {
-    dataOutputStream.writeUTF(type.getName() + message);
+    dataOutputStream.writeUTF(serialize().toString());
   }
 
   @Override
   public void readPacketData(DataInputStream dataInputStream) throws IOException {
-    message = dataInputStream.readUTF();
+    deserialize(dataInputStream.readUTF());
   }
 
   public String getMessage() {
     return message;
   }
 
+  public MessagePacketType getPacketType() { return packetType; }
+
+  public MessageChatType getChatType() {
+    return chatType;
+  }
+
+  public JsonObject serialize() {
+    JsonParser parser = new JsonParser();
+    JsonObject object = new JsonObject();
+
+    object.addProperty("type", getPacketType().getName());
+    object.addProperty("chatType", getChatType().getName());
+    object.addProperty("message", getMessage());
+    return object;
+  }
+
+  public void deserialize(String rawPacket) {
+    JsonParser parser = new JsonParser();
+    JsonObject object = (JsonObject) parser.parse(rawPacket);
+
+    packetType = MessagePacketType.valueOf(object.get("type").getAsString());
+    chatType = MessageChatType.valueOf(object.get("chatType").getAsString());
+    message = object.get("message").getAsString();
+  }
 }

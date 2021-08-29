@@ -187,7 +187,7 @@ public class ClientConnection implements CommandSender {
   // Optic_Fusion1 - start
   @Override
   public void sendMessage(String message) {
-    sendPacket(new MessagePacket(message));
+  //  sendPacket(new MessagePacket(MessagePacket.Type.CHAT, message));
   }
 
   public boolean isLoggedIn() {
@@ -198,7 +198,7 @@ public class ClientConnection implements CommandSender {
     loggedIn = true;
     this.username = username;
     uniqueId = server.getDatabase().getUUID(username);
-    sendPacket(new MessagePacket("You're now logged in"));
+   // sendPacket(new MessagePacket(MessagePacket.Type.CHAT, "You're now logged in"));
   }
 
   public void logout() {

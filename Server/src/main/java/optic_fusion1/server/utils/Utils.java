@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import optic_fusion1.server.Main;
-import static optic_fusion1.server.network.SocketServer.LOGGER;
+import static optic_fusion1.server.Main.LOGGER;
 
 public final class Utils {
 
