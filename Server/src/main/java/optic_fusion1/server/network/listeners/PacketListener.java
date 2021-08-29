@@ -21,6 +21,7 @@ import net.lenni0451.asmevents.EventManager;
 import optic_fusion1.packets.IPacket;
 import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.impl.MessagePacket;
+import optic_fusion1.packets.serializers.Client;
 import optic_fusion1.packets.serializers.Message;
 import optic_fusion1.server.network.ClientConnection;
 import optic_fusion1.server.network.SocketServer;
@@ -37,22 +38,31 @@ public class PacketListener implements ServerEventListener {
     }
 
     @Override
-    public void onPacketReceive(ClientConnection client, IPacket packet) {
+    public void onPacketReceive(ClientConnection clientConnection, IPacket packet) {
         if (packet instanceof MessagePacket) {
             MessagePacket messagePacket = (MessagePacket) packet;
             OpCode opCode = messagePacket.getOpCode();
             LOGGER.info("Type: " + opCode + "; Message: " + messagePacket.getMessage());
 
-            if (opCode.equals(OpCode.MESSAGE)) {
-                Message message = Message.deserialize(messagePacket.getMessage());
-                if (message.getContent().startsWith("/")) {
-                    EventManager.call(new CommandEvent(client, message.getContent().substring(1)));
-                } else if (!client.isLoggedIn()) {
-                    client.sendPacket(new MessagePacket(OpCode.LOGIN_REQUIRED, "", MessagePacket.MessageChatType.SYSTEM));
-                } else {
-                    server.broadcastPacket(new MessagePacket(OpCode.MESSAGE, new Message(message.getClient(), message.getContent()).serialize(), MessagePacket.MessageChatType.USER));
-                    System.out.println(client.getUsername() + ": " + messagePacket.getMessage());
+            switch(opCode) {
+                case MESSAGE -> {
+                    Message message = Message.deserialize(messagePacket.getMessage());
+                    LOGGER.info(message.getContent());
+                    if (message.getContent().startsWith("/")) {
+                        EventManager.call(new CommandEvent(clientConnection, message.getContent().substring(1)));
+                    } else if (!clientConnection.isLoggedIn()) {
+                        clientConnection.sendPacket(new MessagePacket(OpCode.LOGIN_REQUIRED, "", MessagePacket.MessageChatType.SYSTEM));
+                    } else {
+                        server.broadcastPacket(new MessagePacket(OpCode.MESSAGE, new Message(message.getClient(), message.getContent()).serialize(), MessagePacket.MessageChatType.USER));
+                        LOGGER.info(clientConnection.getUsername() + ": " + messagePacket.getMessage());
+                    }
                 }
+                case DISCONNECT -> {
+                    Client client = Client.deserialize(messagePacket.getMessage());
+                    LOGGER.info(String.format("== %s has disconnected", client.getUsername()));
+                }
+                case CONNECT -> LOGGER.info("CONNECT");
+                case UNKNOWN -> LOGGER.info("UNKNOWN");
             }
         }
     }

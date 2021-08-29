@@ -47,7 +47,10 @@ public class PacketListener implements ClientEventListener {
                     socketClient.setClient(client);
                     LOGGER.info(String.format("== Logged in as %s ==", client.getUsername()));
                 }
-                case DISCONNECT -> LOGGER.info("DISCONNECT");
+                case DISCONNECT -> {
+                    Client client = Client.deserialize(messagePacket.getMessage());
+                    LOGGER.info(String.format("== %s has disconnected ==", client.getUsername()));
+                }
                 case MESSAGE -> {
                     Message message = Message.deserialize(messagePacket.getMessage());
                     switch(messagePacket.getChatType()) {
