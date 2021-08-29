@@ -314,7 +314,7 @@ public class SocketClient implements CommandSender {
     while (isConnected()) {
       String msg = scanner.nextLine();
       // prevent sending empty messages
-      if(msg.isEmpty()) continue;
+      if(msg.isEmpty() || msg.startsWith(" ")) continue;
       sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(this.getClient(), msg).serialize(), MessagePacket.MessageChatType.USER));
     }
   }
