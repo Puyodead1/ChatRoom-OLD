@@ -136,3 +136,7 @@ META-INF/
 Server/server/
 Server/server/logs/
 Server/server/database.db
+
+# Eclipse
+.classpath
+.project
