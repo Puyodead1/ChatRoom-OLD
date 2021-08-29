@@ -17,10 +17,9 @@
 
 package optic_fusion1.client.network.listeners;
 
+import static optic_fusion1.client.Main.LOGGER;
 import optic_fusion1.packets.IPacket;
 import optic_fusion1.packets.impl.MessagePacket;
-
-import static optic_fusion1.client.Main.LOGGER;
 
 public class PacketListener implements ClientEventListener {
 
@@ -49,18 +48,18 @@ public class PacketListener implements ClientEventListener {
         }
     }
 
-//    @Override
-//    public void onConnectionEstablished() {
-//        System.out.println("Connection Established");
-//    }
-//
+    // @Override
+    // public void onConnectionEstablished() {
+    // System.out.println("Connection Established");
+    // }
+    //
     @Override
     public void onDisconnect() {
         System.out.println("Disconnected");
     }
 
-//    @Override
-//    public void onPreConnect() {
-//        System.out.println("Pre Connect");
-//    }
+    // @Override
+    // public void onPreConnect() {
+    // System.out.println("Pre Connect");
+    // }
 }
