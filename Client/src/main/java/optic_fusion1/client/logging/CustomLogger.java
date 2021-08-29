@@ -53,7 +53,7 @@ public class CustomLogger {
       outputStream = System.out;
     }
     dateFormatted = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    logDirectory = new File("server", "logs");
+    logDirectory = new File("client", "logs");
     if (!logDirectory.exists()) {
       logDirectory.mkdirs();
     }
