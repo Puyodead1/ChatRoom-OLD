@@ -17,7 +17,10 @@
 
 package optic_fusion1.client.network.listeners;
 
+import optic_fusion1.client.network.SocketClient;
 import optic_fusion1.packets.IPacket;
+
+import java.net.Socket;
 
 public interface ClientEventListener {
 
@@ -33,7 +36,6 @@ public interface ClientEventListener {
   default void onRawPacketReceive(final byte[] packet) {
   }
 
-  default void onPacketReceive(final IPacket packet) {
+  default void onPacketReceive(final SocketClient socketClient, final IPacket packet) {
   }
-
 }

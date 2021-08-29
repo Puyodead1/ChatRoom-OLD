@@ -19,7 +19,9 @@ package optic_fusion1.server.network.listeners;
 
 import net.lenni0451.asmevents.EventManager;
 import optic_fusion1.packets.IPacket;
+import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.impl.MessagePacket;
+import optic_fusion1.packets.serializers.Message;
 import optic_fusion1.server.network.ClientConnection;
 import optic_fusion1.server.network.SocketServer;
 import optic_fusion1.server.network.events.CommandEvent;
@@ -38,18 +40,19 @@ public class PacketListener implements ServerEventListener {
     public void onPacketReceive(ClientConnection client, IPacket packet) {
         if (packet instanceof MessagePacket) {
             MessagePacket messagePacket = (MessagePacket) packet;
-            MessagePacket.MessagePacketType packetType = messagePacket.getPacketType();
-            if (packetType.equals(MessagePacket.MessagePacketType.CHAT)) {
-                if (messagePacket.getMessage().startsWith("/")) {
-                    EventManager.call(new CommandEvent(client, messagePacket.getMessage().substring(1)));
+            OpCode opCode = messagePacket.getOpCode();
+            LOGGER.info("Type: " + opCode + "; Message: " + messagePacket.getMessage());
+
+            if (opCode.equals(OpCode.MESSAGE)) {
+                Message message = Message.deserialize(messagePacket.getMessage());
+                if (message.getContent().startsWith("/")) {
+                    EventManager.call(new CommandEvent(client, message.getContent().substring(1)));
                 } else if (!client.isLoggedIn()) {
-                    client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "You must be logged in to chat", MessagePacket.MessageChatType.SYSTEM));
+                    client.sendPacket(new MessagePacket(OpCode.LOGIN_REQUIRED, "", MessagePacket.MessageChatType.SYSTEM));
                 } else {
-                    server.broadcastPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, client.getUsername() + ": " + messagePacket.getMessage(), MessagePacket.MessageChatType.USER));
+                    server.broadcastPacket(new MessagePacket(OpCode.MESSAGE, new Message(message.getClient(), message.getContent()).serialize(), MessagePacket.MessageChatType.USER));
                     System.out.println(client.getUsername() + ": " + messagePacket.getMessage());
                 }
-            } else {
-                LOGGER.info("Type: " + packetType + "; Message: " + messagePacket.getMessage());
             }
         }
     }

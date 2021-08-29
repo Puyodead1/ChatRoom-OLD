@@ -24,8 +24,8 @@ import net.lenni0451.asmevents.event.types.ICancellableEvent;
 public class CommandEvent implements IEvent, ICancellableEvent {
 
   private boolean cancelled = false;
-  private String command;
-  private ClientConnection sender;
+  private final String command;
+  private final ClientConnection sender;
 
   public CommandEvent(ClientConnection sender, String command) {
     this.sender = sender;

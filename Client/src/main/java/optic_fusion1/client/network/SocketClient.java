@@ -17,6 +17,7 @@
 package optic_fusion1.client.network;
 
 import optic_fusion1.client.network.listeners.ClientEventListener;
+import optic_fusion1.packets.serializers.Client;
 import optic_fusion1.packets.IPacket;
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -31,9 +32,11 @@ import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 import static optic_fusion1.client.Main.LOGGER;
 import optic_fusion1.commandsystem.command.CommandSender;
+import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.PacketRegister;
 import optic_fusion1.packets.impl.MessagePacket;
 import optic_fusion1.packets.impl.PingPacket;
+import optic_fusion1.packets.serializers.Message;
 import optic_fusion1.packets.utils.RSACrypter;
 
 public class SocketClient implements CommandSender {
@@ -45,6 +48,7 @@ public class SocketClient implements CommandSender {
   private DataOutputStream dataOutputStream;
   private int maxPacketSize = 32767;
   private final boolean useEncryption;
+  private Client client;
 
   private Thread packetListener;
   private final List<ClientEventListener> eventListener;
@@ -244,7 +248,7 @@ public class SocketClient implements CommandSender {
       { //Call event
         for (ClientEventListener clientEventListener : this.eventListener.toArray(new ClientEventListener[0])) {
           try {
-            clientEventListener.onPacketReceive(packetObject);
+            clientEventListener.onPacketReceive(this, packetObject);
           } catch (Throwable t) {
             new Exception("Unhandled exception in client event listener", t).printStackTrace();
           }
@@ -311,8 +315,55 @@ public class SocketClient implements CommandSender {
       String msg = scanner.nextLine();
       // prevent sending empty messages
       if(msg.isEmpty()) continue;
-      sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, msg, MessagePacket.MessageChatType.USER));
+      sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(this.getClient(), msg).serialize(), MessagePacket.MessageChatType.USER));
     }
   }
 
+  public String getIp() {
+    return ip;
+  }
+
+  public int getPort() {
+    return port;
+  }
+
+  public Socket getSocket() {
+    return socket;
+  }
+
+  public DataInputStream getDataInputStream() {
+    return dataInputStream;
+  }
+
+  public DataOutputStream getDataOutputStream() {
+    return dataOutputStream;
+  }
+
+  public boolean isUseEncryption() {
+    return useEncryption;
+  }
+
+  public Client getClient() {
+    return client;
+  }
+
+  public Thread getPacketListener() {
+    return packetListener;
+  }
+
+  public List<ClientEventListener> getEventListener() {
+    return eventListener;
+  }
+
+  public PublicKey getEncryptionKey() {
+    return encryptionKey;
+  }
+
+  public PrivateKey getDecryptionKey() {
+    return decryptionKey;
+  }
+
+  public void setClient(Client client) {
+    this.client = client;
+  }
 }

@@ -16,6 +16,7 @@
  */
 package optic_fusion1.server.network.listeners;
 
+import optic_fusion1.packets.OpCode;
 import optic_fusion1.server.network.ClientConnection;
 import optic_fusion1.server.network.SocketServer;
 import optic_fusion1.packets.impl.MessagePacket;
@@ -34,7 +35,7 @@ public class ConnectionListener implements ServerEventListener {
   public void onSocketConnectionEstablished(ClientConnection client) {
     LOGGER.info("New connection from " + client.getAddress());
     if (server.isLoginRequired() && !client.isLoggedIn()) {
-      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "You need to login before you can talk here", MessagePacket.MessageChatType.SYSTEM));
+      client.sendPacket(new MessagePacket(OpCode.LOGIN_REQUIRED, "", MessagePacket.MessageChatType.SYSTEM));
     }
   }
 
@@ -43,9 +44,9 @@ public class ConnectionListener implements ServerEventListener {
   }
 
   @Override
-  public void onSocketDisconnect(ClientConnection client) {
-    LOGGER.info(client.isLoggedIn() ? client.getUsername() : " A user" + " disconnected from " + client.getAddress());
-    server.broadcastPacket(new MessagePacket(MessagePacket.MessagePacketType.DISCONNECT, client.getUsername(), MessagePacket.MessageChatType.SYSTEM));
+  public void onSocketDisconnect(ClientConnection clientConnection) {
+    LOGGER.info(clientConnection.isLoggedIn() ? clientConnection.getUsername() : " A user" + " disconnected from " + clientConnection.getAddress());
+    server.broadcastPacket(new MessagePacket(OpCode.DISCONNECT, clientConnection.getClient().serialize(), MessagePacket.MessageChatType.SYSTEM));
   }
 
 }

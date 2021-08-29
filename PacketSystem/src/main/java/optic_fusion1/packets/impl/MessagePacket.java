@@ -24,10 +24,11 @@ import java.io.IOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import optic_fusion1.packets.IPacket;
+import optic_fusion1.packets.OpCode;
 
 public class MessagePacket implements IPacket {
 
-  private MessagePacketType packetType;
+  private OpCode opCode;
   private MessageChatType chatType;
   private String message;
 
@@ -35,26 +36,10 @@ public class MessagePacket implements IPacket {
 
   }
 
-  public MessagePacket(MessagePacketType packetType, String message, MessageChatType chatType) {
-    this.packetType = packetType;
+  public MessagePacket(OpCode opCode, String message, MessageChatType chatType) {
+    this.opCode = opCode;
     this.message = message;
     this.chatType = chatType;
-  }
-
-  public enum MessagePacketType {
-    LOGIN("LOGIN"),
-    DISCONNECT("DISCONNECT"),
-    CHAT("CHAT");
-
-    private final String name;
-
-    MessagePacketType(String name) {
-      this.name = name;
-    }
-
-    public String getName() {
-      return name;
-    }
   }
 
   public enum MessageChatType {
@@ -86,7 +71,7 @@ public class MessagePacket implements IPacket {
     return message;
   }
 
-  public MessagePacketType getPacketType() { return packetType; }
+  public OpCode getOpCode() { return opCode; }
 
   public MessageChatType getChatType() {
     return chatType;
@@ -96,7 +81,7 @@ public class MessagePacket implements IPacket {
     JsonParser parser = new JsonParser();
     JsonObject object = new JsonObject();
 
-    object.addProperty("type", getPacketType().getName());
+    object.addProperty("type", getOpCode().getCode());
     object.addProperty("chatType", getChatType().getName());
     object.addProperty("message", getMessage());
     return object;
@@ -106,7 +91,7 @@ public class MessagePacket implements IPacket {
     JsonParser parser = new JsonParser();
     JsonObject object = (JsonObject) parser.parse(rawPacket);
 
-    packetType = MessagePacketType.valueOf(object.get("type").getAsString());
+    opCode = OpCode.valueOf(object.get("type").getAsInt());
     chatType = MessageChatType.valueOf(object.get("chatType").getAsString());
     message = object.get("message").getAsString();
   }

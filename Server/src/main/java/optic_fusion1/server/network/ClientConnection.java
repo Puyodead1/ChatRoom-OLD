@@ -17,7 +17,9 @@
 
 package optic_fusion1.server.network;
 
+import optic_fusion1.packets.serializers.Client;
 import optic_fusion1.packets.IPacket;
+import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.utils.RSACrypter;
 
 import java.io.ByteArrayOutputStream;
@@ -31,6 +33,8 @@ import java.security.PublicKey;
 import java.util.UUID;
 import optic_fusion1.commandsystem.command.CommandSender;
 import optic_fusion1.packets.impl.MessagePacket;
+
+import static optic_fusion1.server.Main.LOGGER;
 
 public class ClientConnection implements CommandSender {
 
@@ -52,6 +56,7 @@ public class ClientConnection implements CommandSender {
   private boolean loggedIn;
   private UUID uniqueId;
   private String username;
+  private Client client;
   // Optic_Fusion1 end
 
   public ClientConnection(final SocketServer server, final Socket socket) {
@@ -195,10 +200,19 @@ public class ClientConnection implements CommandSender {
   }
 
   public void login(String username) {
-    loggedIn = true;
+    this.loggedIn = true;
     this.username = username;
-    uniqueId = server.getDatabase().getUUID(username);
-   // sendPacket(new MessagePacket(MessagePacket.Type.CHAT, "You're now logged in"));
+    this.uniqueId = server.getDatabase().getUUID(username);
+
+    this.client = new Client(uniqueId, username);
+
+    LOGGER.info(username + " has logged in from " + this.getAddress());
+
+    // send the client their user information
+    this.sendPacket(new MessagePacket(OpCode.LOGGED_IN, client.serialize(), MessagePacket.MessageChatType.SYSTEM));
+
+    // broadcast to everyone that the client has joined
+    server.broadcastPacket(new MessagePacket(OpCode.LOGIN, client.serialize(), MessagePacket.MessageChatType.SYSTEM));
   }
 
   public void logout() {
@@ -221,6 +235,10 @@ public class ClientConnection implements CommandSender {
 
   public String getUsername() {
     return username;
+  }
+
+  public Client getClient() {
+    return client;
   }
 
   // Optic_Fusion1 - end

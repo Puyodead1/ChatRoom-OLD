@@ -17,45 +17,67 @@
 
 package optic_fusion1.client.network.listeners;
 
-import static optic_fusion1.client.Main.LOGGER;
+import optic_fusion1.client.network.SocketClient;
+import optic_fusion1.packets.serializers.Client;
 import optic_fusion1.packets.IPacket;
+import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.impl.MessagePacket;
+import optic_fusion1.packets.serializers.Message;
+
+import static optic_fusion1.client.Main.LOGGER;
 
 public class PacketListener implements ClientEventListener {
 
     @Override
-    public void onPacketReceive(IPacket packet) {
+    public void onPacketReceive(SocketClient socketClient, IPacket packet) {
         if (packet instanceof MessagePacket) {
             MessagePacket messagePacket = (MessagePacket) packet;
-            MessagePacket.MessagePacketType packetType = messagePacket.getPacketType();
-            if (packetType.equals(MessagePacket.MessagePacketType.CHAT)) {
-                MessagePacket.MessageChatType chatType = messagePacket.getChatType();
-                switch (chatType) {
-                    case SYSTEM:
-                        LOGGER.info("[System] " + messagePacket.getMessage());
-                        break;
-                    case USER:
-                        LOGGER.info(messagePacket.getMessage());
-                        break;
+            OpCode opCode = messagePacket.getOpCode();
+//            LOGGER.info("Type: " + opCode + "; Message: " + messagePacket.getMessage());
+
+            switch (opCode) {
+                case LOGIN_REQUIRED -> LOGGER.info("This server requires you to login before you can chat.");
+                case LOGIN -> {
+                    Client client = Client.deserialize(messagePacket.getMessage());
+                    // TODO: we should probably track the known clients in a hashmap somewhere
+                    LOGGER.info(String.format("== %s has joined ==", client.getUsername()));
                 }
-            } else if (packetType.equals(MessagePacket.MessagePacketType.LOGIN)) {
-                LOGGER.info("[ " + messagePacket.getMessage() + " has joined ]");
-            } else if (packetType.equals(MessagePacket.MessagePacketType.DISCONNECT)) {
-                LOGGER.info("[ " + messagePacket.getMessage() + " has left ]");
-            } else {
-                LOGGER.info("Type: " + packetType + "; Message: " + messagePacket.getMessage());
+                case LOGGED_IN -> {
+                    Client client = Client.deserialize(messagePacket.getMessage());
+                    socketClient.setClient(client);
+                    LOGGER.info(String.format("== Logged in as %s ==", client.getUsername()));
+                }
+                case DISCONNECT -> LOGGER.info("DISCONNECT");
+                case MESSAGE -> {
+                    Message message = Message.deserialize(messagePacket.getMessage());
+                    switch(messagePacket.getChatType()) {
+                        case USER -> {
+                            if(message.getClient().getUuid().equals(socketClient.getClient().getUuid())) {
+                                // the client receiving the message is also the client that sent the message
+                                LOGGER.info(String.format(" * You: %s", message.getContent()));
+                            } else {
+                                LOGGER.info(String.format("%s: %s", message.getClient().getUsername(), message.getContent()));
+                            }
+                        }
+                        case SYSTEM -> {
+                            LOGGER.info(String.format("[System]: %s", message.getContent()));
+                        }
+                    }
+                }
+                case CONNECT -> LOGGER.info("CONNECT");
+                case UNKNOWN -> LOGGER.info("UNKNOWN");
             }
         }
     }
 
-    // @Override
-    // public void onConnectionEstablished() {
-    // System.out.println("Connection Established");
-    // }
-    //
+    @Override
+    public void onConnectionEstablished() {
+        System.out.println("=== Connected to server ===");
+    }
+
     @Override
     public void onDisconnect() {
-        System.out.println("Disconnected");
+        System.out.println("=== Disconnected ===");
     }
 
     // @Override

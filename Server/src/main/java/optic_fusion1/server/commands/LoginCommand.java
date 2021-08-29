@@ -19,6 +19,9 @@ package optic_fusion1.server.commands;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import optic_fusion1.packets.OpCode;
+import optic_fusion1.packets.serializers.Message;
 import optic_fusion1.server.Database;
 import optic_fusion1.server.network.ClientConnection;
 import optic_fusion1.server.network.SocketServer;
@@ -42,34 +45,32 @@ public class LoginCommand extends Command {
   
   @Override
   public boolean execute(CommandSender sender, String commandLabel, List<String> args) {
-    ClientConnection client = (ClientConnection) sender;
+    ClientConnection clientConnection = (ClientConnection) sender;
     if (loginAttempts == 3) {
-      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "[Login] You need to wait 10 seconds before trying to login again", MessagePacket.MessageChatType.SYSTEM));
+      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Login] You need to wait 10 seconds before trying to login again").serialize(), MessagePacket.MessageChatType.SYSTEM));
       return true;
     }
     if (args.size() != 2) {
-      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "[Login] Usage: /login <username> <password>", MessagePacket.MessageChatType.SYSTEM));
+      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Login] Usage: /login <username> <password>").serialize(), MessagePacket.MessageChatType.SYSTEM));
       return true;
     }
-    if (client.isLoggedIn()) {
-      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "[Login] You are already logged in", MessagePacket.MessageChatType.SYSTEM));
+    if (clientConnection.isLoggedIn()) {
+      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Login] You are already logged in").serialize(), MessagePacket.MessageChatType.SYSTEM));
       return true;
     }
     String username = args.get(0);
     String password = args.get(1);
     if (!database.containsUser(username)) {
-      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "[Login] Invalid username or password", MessagePacket.MessageChatType.SYSTEM));
-      ratelimit(client);
+      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Login] Invalid username or password").serialize(), MessagePacket.MessageChatType.SYSTEM));
+      ratelimit(clientConnection);
       return true;
     }
     if (!database.isPasswordCorrect(username, password)) {
-      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "[Login] Invalid username or password", MessagePacket.MessageChatType.SYSTEM));
-      ratelimit(client);
+      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Login] Invalid username or password").serialize(), MessagePacket.MessageChatType.SYSTEM));
+      ratelimit(clientConnection);
       return true;
     }
-    client.login(username);
-    LOGGER.info(username + " has logged in from " + client.getAddress());
-    server.broadcastPacket(new MessagePacket(MessagePacket.MessagePacketType.LOGIN, username, MessagePacket.MessageChatType.SYSTEM));
+    clientConnection.login(username);
     return true;
   }
   
@@ -78,7 +79,7 @@ public class LoginCommand extends Command {
     if (loginAttempts == 3) {
       server.getExecutorService().schedule(() -> {
         loginAttempts = 0;
-        client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "You can try to login again", MessagePacket.MessageChatType.SYSTEM));
+        client.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "You can try to login again").serialize(), MessagePacket.MessageChatType.SYSTEM));
       }, 10, TimeUnit.SECONDS);
     }
   }

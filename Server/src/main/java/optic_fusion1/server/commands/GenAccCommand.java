@@ -18,8 +18,12 @@
 package optic_fusion1.server.commands;
 
 import java.util.List;
+import java.util.UUID;
 
+import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.impl.MessagePacket;
+import optic_fusion1.packets.serializers.Client;
+import optic_fusion1.packets.serializers.Message;
 import optic_fusion1.server.network.ClientConnection;
 import optic_fusion1.server.network.SocketServer;
 import optic_fusion1.server.utils.RandomString;
@@ -43,7 +47,7 @@ public class GenAccCommand extends Command{
     ClientConnection client = (ClientConnection) sender;
     boolean created = server.createAccount(client, username, password);
     if (created) {
-      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "Username: " + username + " Password: " + password, MessagePacket.MessageChatType.SYSTEM));
+      client.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "Username: " + username + " Password: " + password).serialize(), MessagePacket.MessageChatType.SYSTEM));
     }
     return true;
   }

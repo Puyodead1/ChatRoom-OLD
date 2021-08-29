@@ -18,9 +18,11 @@
 package optic_fusion1.server.network;
 
 import optic_fusion1.packets.IPacket;
+import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.PacketRegister;
 import optic_fusion1.packets.impl.MessagePacket;
 import optic_fusion1.packets.impl.PingPacket;
+import optic_fusion1.packets.serializers.Message;
 import optic_fusion1.packets.utils.RSACrypter;
 
 import java.io.ByteArrayInputStream;
@@ -350,7 +352,7 @@ public class SocketServer {
 
   public boolean createAccount(ClientConnection client, String userName, String password) {
     if (DATABASE.containsUser(userName)) {
-      client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "The username '" + userName + "' is already taken", MessagePacket.MessageChatType.SYSTEM));
+      client.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "The username '" + userName + "' is already taken").serialize(), MessagePacket.MessageChatType.SYSTEM));
       LOGGER.info(userName + " is already set");
       return false;
     }
@@ -358,7 +360,7 @@ public class SocketServer {
       HaveIBeenPwndApi hibp = HaveIBeenPwndBuilder.create("HaveIBeenPwnd").build();
       try {
         if (hibp.isPlainPasswordPwned(password)) {
-          client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "The password is insecure use something else", MessagePacket.MessageChatType.SYSTEM));
+          client.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "The password is insecure use something else").serialize(), MessagePacket.MessageChatType.SYSTEM));
           return false;
         }
       } catch (HaveIBeenPwndException ex) {
@@ -366,7 +368,7 @@ public class SocketServer {
       }
     }
     DATABASE.insertUser(userName, UUID.randomUUID(), BCrypt.hashpw(password, BCrypt.gensalt()));
-    client.sendPacket(new MessagePacket(MessagePacket.MessagePacketType.CHAT, "Registered the username " + userName, MessagePacket.MessageChatType.SYSTEM));
+    client.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "Registered the username " + userName).serialize(), MessagePacket.MessageChatType.SYSTEM));
     LOGGER.info("Registered username " + userName);
     return true;
   }
@@ -381,8 +383,6 @@ public class SocketServer {
       serverIP = SERVER_PROPERTIES.getProperty("server-ip");
       port = Integer.parseInt(SERVER_PROPERTIES.getProperty("server-port", "25565"));
       allowInsecurePasswords = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("allow-insecure-properties", "false"));
-    } catch (FileNotFoundException ex) {
-      LOGGER.exception(ex);
     } catch (IOException ex) {
       LOGGER.exception(ex);
     }
