@@ -140,3 +140,5 @@ Server/server/database.db
 # Eclipse
 .classpath
 .project
+Server/database.db
+Server/server.properties
