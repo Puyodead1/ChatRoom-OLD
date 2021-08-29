@@ -57,7 +57,7 @@ public class PacketListener implements ClientEventListener {
                         case USER -> {
                             if(message.getClient().getUuid().equals(socketClient.getClient().getUuid())) {
                                 // the client receiving the message is also the client that sent the message
-                                LOGGER.info(String.format(" * You: %s", message.getContent()));
+                                LOGGER.info(String.format("* You: %s", message.getContent()));
                             } else {
                                 LOGGER.info(String.format("%s: %s", message.getClient().getUsername(), message.getContent()));
                             }
