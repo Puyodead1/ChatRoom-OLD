@@ -82,9 +82,4 @@ public class PacketListener implements ClientEventListener {
     public void onDisconnect() {
         System.out.println("=== Disconnected ===");
     }
-
-    // @Override
-    // public void onPreConnect() {
-    // System.out.println("Pre Connect");
-    // }
 }

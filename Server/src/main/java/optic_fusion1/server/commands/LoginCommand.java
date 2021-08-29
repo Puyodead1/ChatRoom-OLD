@@ -47,26 +47,26 @@ public class LoginCommand extends Command {
   public boolean execute(CommandSender sender, String commandLabel, List<String> args) {
     ClientConnection clientConnection = (ClientConnection) sender;
     if (loginAttempts == 3) {
-      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Login] You need to wait 10 seconds before trying to login again").serialize(), MessagePacket.MessageChatType.SYSTEM));
+      sendMessage(clientConnection, "[Login] You need to wait 10 seconds before trying to login again");
       return true;
     }
     if (args.size() != 2) {
-      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Login] Usage: /login <username> <password>").serialize(), MessagePacket.MessageChatType.SYSTEM));
+      sendMessage(clientConnection, "[Login] Usage: /login <username> <password>");
       return true;
     }
     if (clientConnection.isLoggedIn()) {
-      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Login] You are already logged in").serialize(), MessagePacket.MessageChatType.SYSTEM));
+      sendMessage(clientConnection, "[Login] You are already logged in");
       return true;
     }
     String username = args.get(0);
     String password = args.get(1);
     if (!database.containsUser(username)) {
-      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Login] Invalid username or password").serialize(), MessagePacket.MessageChatType.SYSTEM));
+      sendMessage(clientConnection, "[Login] Invalid username or password");
       ratelimit(clientConnection);
       return true;
     }
     if (!database.isPasswordCorrect(username, password)) {
-      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Login] Invalid username or password").serialize(), MessagePacket.MessageChatType.SYSTEM));
+      sendMessage(clientConnection, "[Login] Invalid username or password");
       ratelimit(clientConnection);
       return true;
     }
@@ -74,14 +74,17 @@ public class LoginCommand extends Command {
     return true;
   }
   
-  private void ratelimit(ClientConnection client) {
+  private void ratelimit(ClientConnection clientConnection) {
     loginAttempts++;
     if (loginAttempts == 3) {
       server.getExecutorService().schedule(() -> {
         loginAttempts = 0;
-        client.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "You can try to login again").serialize(), MessagePacket.MessageChatType.SYSTEM));
+        sendMessage(clientConnection, "You can try to login again");
       }, 10, TimeUnit.SECONDS);
     }
   }
-  
+
+    private void sendMessage(ClientConnection clientConnection, String msg) {
+      clientConnection.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, msg).serialize(), MessagePacket.MessageChatType.SYSTEM));
+    }
 }
