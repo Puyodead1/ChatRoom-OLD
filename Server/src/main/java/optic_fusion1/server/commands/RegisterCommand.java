@@ -17,6 +17,11 @@
 package optic_fusion1.server.commands;
 
 import java.util.List;
+import java.util.Objects;
+
+import optic_fusion1.packets.OpCode;
+import optic_fusion1.packets.impl.MessagePacket;
+import optic_fusion1.packets.serializers.Message;
 import optic_fusion1.server.network.ClientConnection;
 import optic_fusion1.server.network.SocketServer;
 import optic_fusion1.commandsystem.command.Command;
@@ -34,8 +39,12 @@ public class RegisterCommand extends Command {
   @Override
   public boolean execute(CommandSender sender, String commandLabel, List<String> args) {
     ClientConnection client = (ClientConnection) sender;
-    if (args.size() != 2) {
-      client.sendMessage("/register <username> <passwod>");
+    if (args.size() != 3) {
+      client.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Register] Usage: /register <username> <password> <password again>").serialize(), MessagePacket.MessageChatType.SYSTEM));
+      return true;
+    }
+    if(!Objects.equals(args.get(1), args.get(2))) {
+      client.sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, "[Register] Passwords do not match").serialize(), MessagePacket.MessageChatType.SYSTEM));
       return true;
     }
     server.createAccount(client, args.get(0), args.get(1));

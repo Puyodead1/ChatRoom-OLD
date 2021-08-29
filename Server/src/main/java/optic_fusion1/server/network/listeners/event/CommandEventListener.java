@@ -23,7 +23,7 @@ import optic_fusion1.commandsystem.CommandHandler;
 
 public class CommandEventListener {
 
-  private CommandHandler commandHandler;
+  private final CommandHandler commandHandler;
 
   public CommandEventListener(CommandHandler commandHandler) {
     this.commandHandler = commandHandler;

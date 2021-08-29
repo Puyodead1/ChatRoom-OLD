@@ -182,8 +182,8 @@ public class CustomLogger {
       return "";
     }
     LocalTime timeObject = LocalTime.now();
-    String time = timeObject.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-    return String.format("[%s] [%s/%s]: %s", time, Thread.currentThread().getName(), level.name(), message);
+    String time = timeObject.format(DateTimeFormatter.ofPattern("HH:mm"));
+    return String.format("[%s]: %s", time, message);
   }
 
   private void logInFile(Throwable exception) {

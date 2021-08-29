@@ -16,6 +16,7 @@
  */
 package optic_fusion1.server;
 
+import optic_fusion1.server.logging.CustomLogger;
 import optic_fusion1.server.network.SocketServer;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -28,6 +29,7 @@ import net.lenni0451.asmevents.EventManager;
 import optic_fusion1.packets.impl.HeartBeatPacket;
 
 public class Main {
+  public static final CustomLogger LOGGER = new CustomLogger();
 
   public static void main(String[] args) {
     SocketServer server = new SocketServer();
@@ -38,8 +40,9 @@ public class Main {
     EventManager.register(new CommandEventListener(server.getCommandHandler()));
     try {
       server.bind();
+      LOGGER.info("Server started");
     } catch (IOException ex) {
-      Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+     LOGGER.severe(null, ex);
     }
   }
 
