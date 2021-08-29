@@ -41,6 +41,10 @@ public class CommandHandler {
   }
 
   public boolean executeCommand(CommandSender sender, String message) {
+    if (message.equals("/")) {
+      sender.sendMessage("You did not enter a command name");
+      return false;
+    }
     try {
       List<String> args = ShellParser.parseString(message);
       String commandLabel = args.get(0);
