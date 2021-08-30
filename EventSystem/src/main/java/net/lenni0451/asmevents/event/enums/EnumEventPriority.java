@@ -13,12 +13,11 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package net.lenni0451.asmevents.event.enums;
 
 public enum EnumEventPriority {
 
-    LOWEST, LOWER, LOW, NORMAL, HIGH, HIGHER, HIGHEST
+  LOWEST, LOWER, LOW, NORMAL, HIGH, HIGHER, HIGHEST
 
 }

@@ -13,14 +13,13 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package net.lenni0451.asmevents.internal;
 
 import net.lenni0451.asmevents.event.IEvent;
 
 public interface IEventPipeline {
 
-    void call(IEvent event);
+  void call(IEvent event);
 
 }

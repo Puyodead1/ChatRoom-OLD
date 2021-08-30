@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package net.lenni0451.asmevents.event.types;
 
 import net.lenni0451.asmevents.event.IEvent;
@@ -24,8 +23,8 @@ import net.lenni0451.asmevents.event.IEvent;
  */
 public interface ICancellableEvent extends IEvent {
 
-    boolean isCancelled();
+  boolean isCancelled();
 
-    void setCancelled(final boolean cancelled);
+  void setCancelled(final boolean cancelled);
 
 }

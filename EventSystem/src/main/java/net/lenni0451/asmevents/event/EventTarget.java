@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package net.lenni0451.asmevents.event;
 
 import net.lenni0451.asmevents.event.enums.EnumEventPriority;
@@ -29,24 +28,24 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EventTarget {
 
-    /**
-     * The priority of the event in the pipeline
-     */
-    EnumEventPriority priority() default EnumEventPriority.NORMAL;
+  /**
+   * The priority of the event in the pipeline
+   */
+  EnumEventPriority priority() default EnumEventPriority.NORMAL;
 
-    /**
-     * The type of event which should handled by the method
-     */
-    EnumEventType type() default EnumEventType.ALL;
+  /**
+   * The type of event which should handled by the method
+   */
+  EnumEventType type() default EnumEventType.ALL;
 
-    /**
-     * The method also targets cancelled methods
-     */
-    boolean skipCancelled() default false;
+  /**
+   * The method also targets cancelled methods
+   */
+  boolean skipCancelled() default false;
 
-    /**
-     * Events to listen to which do not need a parameter passed
-     */
-    Class<? extends IEvent>[] noParamEvents() default {};
+  /**
+   * Events to listen to which do not need a parameter passed
+   */
+  Class<? extends IEvent>[] noParamEvents() default {};
 
 }

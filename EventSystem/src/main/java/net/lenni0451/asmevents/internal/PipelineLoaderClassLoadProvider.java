@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package net.lenni0451.asmevents.internal;
 
 import net.lenni0451.asmevents.IClassLoadProvider;
@@ -22,15 +21,15 @@ import net.lenni0451.asmevents.utils.PipelineLoader;
 
 public class PipelineLoaderClassLoadProvider implements IClassLoadProvider {
 
-    private final Class<?> parentClass;
+  private final Class<?> parentClass;
 
-    public PipelineLoaderClassLoadProvider(final Class<?> parentClass) {
-        this.parentClass = parentClass;
-    }
+  public PipelineLoaderClassLoadProvider(final Class<?> parentClass) {
+    this.parentClass = parentClass;
+  }
 
-    @Override
-    public <T> Class<T> loadClass(String name, byte[] data) {
-        return new PipelineLoader(this.parentClass).loadPipeline(name, data);
-    }
+  @Override
+  public <T> Class<T> loadClass(String name, byte[] data) {
+    return new PipelineLoader(this.parentClass).loadPipeline(name, data);
+  }
 
 }

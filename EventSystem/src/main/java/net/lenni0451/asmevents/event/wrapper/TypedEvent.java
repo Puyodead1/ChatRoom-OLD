@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package net.lenni0451.asmevents.event.wrapper;
 
 import net.lenni0451.asmevents.event.IEvent;
@@ -23,15 +22,15 @@ import net.lenni0451.asmevents.event.types.ITypedEvent;
 
 public class TypedEvent implements IEvent, ITypedEvent {
 
-    private final EnumEventType type;
+  private final EnumEventType type;
 
-    public TypedEvent(final EnumEventType type) {
-        this.type = type;
-    }
+  public TypedEvent(final EnumEventType type) {
+    this.type = type;
+  }
 
-    @Override
-    public EnumEventType getType() {
-        return this.type;
-    }
+  @Override
+  public EnumEventType getType() {
+    return this.type;
+  }
 
 }

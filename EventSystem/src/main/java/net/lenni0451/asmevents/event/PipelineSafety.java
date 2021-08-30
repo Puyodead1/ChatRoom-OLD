@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package net.lenni0451.asmevents.event;
 
 import java.lang.annotation.ElementType;
@@ -26,6 +25,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface PipelineSafety {
 
-    boolean print() default true;
+  boolean print() default true;
 
 }
