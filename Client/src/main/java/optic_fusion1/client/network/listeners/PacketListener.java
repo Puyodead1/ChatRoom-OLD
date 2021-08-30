@@ -17,12 +17,19 @@
 
 package optic_fusion1.client.network.listeners;
 
+import optic_fusion1.client.Utils;
 import optic_fusion1.client.network.SocketClient;
 import optic_fusion1.packets.serializers.Client;
 import optic_fusion1.packets.IPacket;
 import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.impl.MessagePacket;
 import optic_fusion1.packets.serializers.Message;
+
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static optic_fusion1.client.Main.LOGGER;
 
@@ -60,6 +67,12 @@ public class PacketListener implements ClientEventListener {
                                 LOGGER.info(String.format("* You: %s", message.getContent()));
                             } else {
                                 LOGGER.info(String.format("%s: %s", message.getClient().getUsername(), message.getContent()));
+                                // play notification sound
+                                try {
+                                    Utils.playSound("ping");
+                                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException | InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                         case SYSTEM -> {
