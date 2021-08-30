@@ -27,7 +27,11 @@ import optic_fusion1.packets.serializers.Message;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+
 import java.io.IOException;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static optic_fusion1.client.Client.getLogger;
 
