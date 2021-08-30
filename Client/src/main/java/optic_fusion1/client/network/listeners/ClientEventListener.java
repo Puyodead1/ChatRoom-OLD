@@ -24,13 +24,13 @@ import java.net.Socket;
 
 public interface ClientEventListener {
 
-  default void onPreConnect() {
+  default void onPreConnect(SocketClient socketClient) {
   }
 
-  default void onConnectionEstablished() {
+  default void onConnectionEstablished(SocketClient socketClient) {
   }
 
-  default void onDisconnect() {
+  default void onDisconnect(SocketClient socketClient) {
   }
 
   default void onRawPacketReceive(final byte[] packet) {

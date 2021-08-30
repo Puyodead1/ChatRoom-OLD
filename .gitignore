@@ -137,8 +137,13 @@ Server/server/
 Server/server/logs/
 Server/server/database.db
 
-# Eclipse
+# VSC
 .classpath
 .project
+
+# Misc
 Server/database.db
 Server/server.properties
+*.log.*
+
+Client/*.wav

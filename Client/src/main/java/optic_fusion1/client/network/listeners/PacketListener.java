@@ -19,19 +19,17 @@ package optic_fusion1.client.network.listeners;
 
 import optic_fusion1.client.Utils;
 import optic_fusion1.client.network.SocketClient;
-import optic_fusion1.packets.serializers.Client;
 import optic_fusion1.packets.IPacket;
 import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.impl.MessagePacket;
+import optic_fusion1.packets.serializers.Client;
 import optic_fusion1.packets.serializers.Message;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
-import static optic_fusion1.client.Main.LOGGER;
+import static optic_fusion1.client.Client.getLogger;
 
 public class PacketListener implements ClientEventListener {
 
@@ -40,33 +38,31 @@ public class PacketListener implements ClientEventListener {
         if (packet instanceof MessagePacket) {
             MessagePacket messagePacket = (MessagePacket) packet;
             OpCode opCode = messagePacket.getOpCode();
-//            LOGGER.info("Type: " + opCode + "; Message: " + messagePacket.getMessage());
-
             switch (opCode) {
-                case LOGIN_REQUIRED -> LOGGER.info("This server requires you to login before you can chat.");
+                case LOGIN_REQUIRED -> getLogger().info("This server requires you to login before you can chat.");
                 case LOGIN -> {
                     Client client = Client.deserialize(messagePacket.getMessage());
                     // TODO: we should probably track the known clients in a hashmap somewhere
-                    LOGGER.info(String.format("== %s has joined ==", client.getUsername()));
+                    getLogger().info(String.format("== %s has joined ==", client.getUsername()));
                 }
                 case LOGGED_IN -> {
                     Client client = Client.deserialize(messagePacket.getMessage());
-                    socketClient.setClient(client);
-                    LOGGER.info(String.format("== Logged in as %s ==", client.getUsername()));
+                    socketClient.setClientUser(client);
+                    getLogger().info(String.format("== Logged in as %s ==", client.getUsername()));
                 }
                 case DISCONNECT -> {
                     Client client = Client.deserialize(messagePacket.getMessage());
-                    LOGGER.info(String.format("== %s has disconnected ==", client.getUsername()));
+                    getLogger().info(String.format("== %s has disconnected ==", client.getUsername()));
                 }
                 case MESSAGE -> {
                     Message message = Message.deserialize(messagePacket.getMessage());
-                    switch(messagePacket.getChatType()) {
+                    switch (messagePacket.getChatType()) {
                         case USER -> {
-                            if(message.getClient().getUuid().equals(socketClient.getClient().getUuid())) {
+                            if (message.getClient().getUuid().equals(socketClient.getClientUser().getUuid())) {
                                 // the client receiving the message is also the client that sent the message
-                                LOGGER.info(String.format("* You: %s", message.getContent()));
+                                getLogger().info(String.format("* You: %s", message.getContent()));
                             } else {
-                                LOGGER.info(String.format("%s: %s", message.getClient().getUsername(), message.getContent()));
+                                getLogger().info(String.format("%s: %s", message.getClient().getUsername(), message.getContent()));
                                 // play notification sound
                                 try {
                                     Utils.playSound("ping");
@@ -76,23 +72,25 @@ public class PacketListener implements ClientEventListener {
                             }
                         }
                         case SYSTEM -> {
-                            LOGGER.info(String.format("[System]: %s", message.getContent()));
+                            getLogger().info(String.format("[System]: %s", message.getContent()));
                         }
                     }
                 }
-                case CONNECT -> LOGGER.info("CONNECT");
-                case UNKNOWN -> LOGGER.info("UNKNOWN");
+                case CONNECT -> getLogger().info("CONNECT");
+                case UNKNOWN -> getLogger().info("UNKNOWN");
             }
         }
     }
 
     @Override
-    public void onConnectionEstablished() {
-        System.out.println("=== Connected to server ===");
+    public void onConnectionEstablished(SocketClient socketClient) {
+        socketClient.getClient().setConnected(true);
+        getLogger().info("=== Connected to server ===");
     }
 
     @Override
-    public void onDisconnect() {
-        System.out.println("=== Disconnected ===");
+    public void onDisconnect(SocketClient socketClient) {
+        socketClient.getClient().setConnected(false);
+        getLogger().info("=== Disconnected ===");
     }
 }
