@@ -18,10 +18,9 @@ package optic_fusion1.server.network.listeners;
 
 import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.impl.MessagePacket;
+import optic_fusion1.server.Main;
 import optic_fusion1.server.network.ClientConnection;
 import optic_fusion1.server.network.SocketServer;
-
-import static optic_fusion1.server.Main.LOGGER;
 
 public class ConnectionListener implements ServerEventListener {
 
@@ -33,7 +32,7 @@ public class ConnectionListener implements ServerEventListener {
 
     @Override
     public void onSocketConnectionEstablished(ClientConnection client) {
-        LOGGER.info("New connection from " + client.getAddress());
+        Main.getLogger().info(String.format("New connection from %s", client.getAddress()));
         if (server.isLoginRequired() && !client.isLoggedIn()) {
             client.sendPacket(new MessagePacket(OpCode.LOGIN_REQUIRED, "", MessagePacket.MessageChatType.SYSTEM));
         }
@@ -46,10 +45,10 @@ public class ConnectionListener implements ServerEventListener {
     @Override
     public void onSocketDisconnect(ClientConnection clientConnection) {
         if (clientConnection.isLoggedIn()) {
-            LOGGER.info(String.format("%s has disconnected from %s", clientConnection.getUsername(), clientConnection.getAddress()));
+            Main.getLogger().info(String.format("%s has disconnected from %s", clientConnection.getUsername(), clientConnection.getAddress()));
             server.broadcastPacket(new MessagePacket(OpCode.DISCONNECT, clientConnection.getClient().serialize(), MessagePacket.MessageChatType.SYSTEM));
         } else {
-            LOGGER.info(String.format("A User has disconnected from %s", clientConnection.getAddress()));
+            Main.getLogger().info(String.format("A User has disconnected from %s", clientConnection.getAddress()));
         }
     }
 

@@ -17,10 +17,13 @@
 
 package optic_fusion1.server.network;
 
-import optic_fusion1.packets.serializers.Client;
+import optic_fusion1.commandsystem.command.CommandSender;
 import optic_fusion1.packets.IPacket;
 import optic_fusion1.packets.OpCode;
+import optic_fusion1.packets.impl.MessagePacket;
+import optic_fusion1.packets.serializers.Client;
 import optic_fusion1.packets.utils.RSACrypter;
+import optic_fusion1.server.Main;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -31,10 +34,6 @@ import java.net.Socket;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.UUID;
-import optic_fusion1.commandsystem.command.CommandSender;
-import optic_fusion1.packets.impl.MessagePacket;
-
-import static optic_fusion1.server.Main.LOGGER;
 
 public class ClientConnection implements CommandSender {
 
@@ -206,7 +205,7 @@ public class ClientConnection implements CommandSender {
 
     this.client = new Client(uniqueId, username);
 
-    LOGGER.info(username + " has logged in from " + this.getAddress());
+    Main.getLogger().info(String.format("%s has logged in from %s", username, getAddress()));
 
     // send the client their user information
     this.sendPacket(new MessagePacket(OpCode.LOGGED_IN, client.serialize(), MessagePacket.MessageChatType.SYSTEM));

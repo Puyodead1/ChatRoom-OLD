@@ -15,11 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package optic_fusion1.client;
+
+import optic_fusion1.common.logging.ChatRoomLogger;
+
+import java.io.IOException;
+
 public class Main {
 
+    private static ChatRoomLogger logger;
     private static Client client;
 
     public static void main(String[] args) {
-        client = new Client();
+        try {
+            logger = new ChatRoomLogger("ChatRoom Client", "client.log");
+            client = new Client();
+        } catch (IOException e) {
+            System.err.println("Failed to create logger!");
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    public static ChatRoomLogger getLogger() {
+        return logger;
+    }
+
+    public static Client getClient() {
+        return client;
     }
 }

@@ -16,7 +16,7 @@
  */
 package optic_fusion1.client.network;
 
-import lombok.Getter;
+import optic_fusion1.client.Main;
 import optic_fusion1.client.network.listeners.ClientEventListener;
 import optic_fusion1.commandsystem.command.CommandSender;
 import optic_fusion1.packets.IPacket;
@@ -38,8 +38,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import static optic_fusion1.client.Client.getLogger;
 
 public class SocketClient implements CommandSender {
 
@@ -85,7 +83,7 @@ public class SocketClient implements CommandSender {
                 try {
                     int packetLength = this.dataInputStream.readInt();
                     if (packetLength > this.maxPacketSize) {
-                        getLogger().warning("Server packet is over max size of " + maxPacketSize);
+                        Main.getLogger().warning("Server packet is over max size of " + maxPacketSize);
                         try {
                             dataInputStream.skipBytes(packetLength);
                         } catch (Exception e) {
@@ -289,12 +287,12 @@ public class SocketClient implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        getLogger().info(message);
+        Main.getLogger().info(message);
     }
 
     public void handleInput() throws IOException {
         String line;
-        while (client.isRunning() && (line = client.getConsoleReader().readLine("> ")) != null) {
+        while (client.isRunning() && (line = Main.getLogger().getConsoleReader().readLine("> ")) != null) {
             if(line.isEmpty() || line.isBlank()) continue;
 
             sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(getClientUser(), line).serialize(), MessagePacket.MessageChatType.USER));

@@ -23,11 +23,10 @@ import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.impl.MessagePacket;
 import optic_fusion1.packets.serializers.Client;
 import optic_fusion1.packets.serializers.Message;
+import optic_fusion1.server.Main;
 import optic_fusion1.server.network.ClientConnection;
 import optic_fusion1.server.network.SocketServer;
 import optic_fusion1.server.network.events.CommandEvent;
-
-import static optic_fusion1.server.Main.LOGGER;
 
 public class PacketListener implements ServerEventListener {
 
@@ -42,27 +41,27 @@ public class PacketListener implements ServerEventListener {
         if (packet instanceof MessagePacket) {
             MessagePacket messagePacket = (MessagePacket) packet;
             OpCode opCode = messagePacket.getOpCode();
-            LOGGER.info("Type: " + opCode + "; Message: " + messagePacket.getMessage());
+            Main.getLogger().info("Type: " + opCode + "; Message: " + messagePacket.getMessage());
 
-            switch(opCode) {
+            switch (opCode) {
                 case MESSAGE -> {
                     Message message = Message.deserialize(messagePacket.getMessage());
-                    LOGGER.info(message.getContent());
+                    Main.getLogger().info(message.getContent());
                     if (message.getContent().startsWith("/")) {
                         EventManager.call(new CommandEvent(clientConnection, message.getContent().substring(1)));
                     } else if (!clientConnection.isLoggedIn()) {
                         clientConnection.sendPacket(new MessagePacket(OpCode.LOGIN_REQUIRED, "", MessagePacket.MessageChatType.SYSTEM));
                     } else {
                         server.broadcastPacket(new MessagePacket(OpCode.MESSAGE, new Message(message.getClient(), message.getContent()).serialize(), MessagePacket.MessageChatType.USER));
-                        LOGGER.info(clientConnection.getUsername() + ": " + messagePacket.getMessage());
+                        Main.getLogger().info(clientConnection.getUsername() + ": " + messagePacket.getMessage());
                     }
                 }
                 case DISCONNECT -> {
                     Client client = Client.deserialize(messagePacket.getMessage());
-                    LOGGER.info(String.format("== %s has disconnected", client.getUsername()));
+                    Main.getLogger().info(String.format("== %s has disconnected", client.getUsername()));
                 }
-                case CONNECT -> LOGGER.info("CONNECT");
-                case UNKNOWN -> LOGGER.info("UNKNOWN");
+                case CONNECT -> Main.getLogger().info("CONNECT");
+                case UNKNOWN -> Main.getLogger().info("UNKNOWN");
             }
         }
     }

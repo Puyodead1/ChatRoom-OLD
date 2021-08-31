@@ -44,7 +44,8 @@ public class MessagePacket implements IPacket {
 
   public enum MessageChatType {
     USER("USER"),
-    SYSTEM("SYSTEM");
+    SYSTEM("SYSTEM"),
+    SERVER("SERVER");
 
     private final String name;
 

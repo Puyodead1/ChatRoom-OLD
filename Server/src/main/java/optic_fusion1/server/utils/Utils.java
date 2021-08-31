@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import optic_fusion1.server.Main;
-import static optic_fusion1.server.Main.LOGGER;
 
 public final class Utils {
 
@@ -34,7 +33,7 @@ public final class Utils {
   public static void copy(String resource, String destination) {
     InputStream ddlStream = Main.class.getClassLoader().getResourceAsStream(resource);
     if (ddlStream == null) {
-      LOGGER.warn("The resource '" + resource + " can not be found");
+      Main.getLogger().warning(String.format("The resource '%s' cannot be found!", resource));
       return;
     }
     try (FileOutputStream fos = new FileOutputStream(destination)) {
@@ -43,10 +42,8 @@ public final class Utils {
       while (-1 != (r = ddlStream.read(buf))) {
         fos.write(buf, 0, r);
       }
-    } catch (FileNotFoundException ex) {
-      LOGGER.exception(ex);
     } catch (IOException ex) {
-      LOGGER.exception(ex);
+      Main.getLogger().severe(ex.getLocalizedMessage());
     }
   }
 
@@ -61,12 +58,12 @@ public final class Utils {
     resourcePath = resourcePath.replace('\\', '/');
     InputStream in = getResource(resourcePath);
     if (in == null) {
-      LOGGER.warn("The embedded resource '" + resourcePath + " can not be found");
+      Main.getLogger().warning("The embedded resource '" + resourcePath + " can not be found");
       return;
     }
     File outFile = new File(dataFolder, resourcePath);
     int lastIndex = resourcePath.lastIndexOf('/');
-    File outDir = new File(dataFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+    File outDir = new File(dataFolder, resourcePath.substring(0, Math.max(lastIndex, 0)));
 
     if (!outDir.exists()) {
       outDir.mkdirs();
@@ -83,11 +80,11 @@ public final class Utils {
         }
         in.close();
       } else {
-        LOGGER.warn("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists");
+        Main.getLogger().warning(String.format("Could not save '%s' to '%s' because it already exists", outFile.getName(), outFile));
       }
     } catch (IOException ex) {
-      LOGGER.severe("Could not save " + outFile.getName() + "  to " + outFile);
-      LOGGER.exception(ex);
+      Main.getLogger().severe(String.format("Could not save '%s' to '%s'", outFile.getName(), outFile));
+      Main.getLogger().severe(ex.getLocalizedMessage());
     }
   }
 
@@ -97,7 +94,7 @@ public final class Utils {
     }
     InputStream input = Main.class.getClassLoader().getResourceAsStream(fileName);
     if (input == null) {
-      LOGGER.warn("The resource '" + fileName + "' can not be found");
+      Main.getLogger().warning(String.format("The resource '%s' could not be found", fileName));
       return null;
     }
     return input;
