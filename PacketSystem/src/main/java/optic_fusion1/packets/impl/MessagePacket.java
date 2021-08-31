@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.packets.impl;
 
 import java.io.DataInputStream;
@@ -72,7 +71,9 @@ public class MessagePacket implements IPacket {
     return message;
   }
 
-  public OpCode getOpCode() { return opCode; }
+  public OpCode getOpCode() {
+    return opCode;
+  }
 
   public MessageChatType getChatType() {
     return chatType;

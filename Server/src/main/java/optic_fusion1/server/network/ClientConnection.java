@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.server.network;
 
 import optic_fusion1.commandsystem.command.CommandSender;
@@ -191,7 +190,7 @@ public class ClientConnection implements CommandSender {
   // Optic_Fusion1 - start
   @Override
   public void sendMessage(String message) {
-  //  sendPacket(new MessagePacket(MessagePacket.Type.CHAT, message));
+    //  sendPacket(new MessagePacket(MessagePacket.Type.CHAT, message));
   }
 
   public boolean isLoggedIn() {

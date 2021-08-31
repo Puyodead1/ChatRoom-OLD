@@ -36,7 +36,7 @@ public class PacketRegister {
 
   private void registerDefaults() {
     //System packets:
-    this.packetTypes.put('\0' + "PingPacket", PingPacket.class);  
+    this.packetTypes.put('\0' + "PingPacket", PingPacket.class);
   }
 
   public void addPacket(final String label, final Class<? extends IPacket> packetClass) {

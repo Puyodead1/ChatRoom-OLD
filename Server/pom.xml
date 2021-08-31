@@ -61,11 +61,11 @@
       <artifactId>EventSystem</artifactId>
       <version>1</version>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>com.github.Puyodead1</groupId>-->
-<!--      <artifactId>Common</artifactId>-->
-<!--      <version>61efd58d57</version>-->
-<!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>com.github.Puyodead1</groupId>-->
+    <!--      <artifactId>Common</artifactId>-->
+    <!--      <version>61efd58d57</version>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>com.github.ChatRoomOrg</groupId>
       <artifactId>Common</artifactId>
@@ -121,8 +121,8 @@
         <version>3.8.1</version>
         <configuration>
           <showDeprecation>true</showDeprecation>
-            <source>14</source>
-            <target>14</target>
+          <source>14</source>
+          <target>14</target>
         </configuration>
       </plugin>
     </plugins>

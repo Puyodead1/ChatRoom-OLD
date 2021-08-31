@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package optic_fusion1.server.network.events;
 
 import net.lenni0451.asmevents.event.IEvent;
@@ -23,31 +22,31 @@ import optic_fusion1.server.network.ClientConnection;
 
 public class CommandEvent implements IEvent, ICancellableEvent {
 
-    private boolean cancelled = false;
-    private final String command;
-    private final ClientConnection sender;
+  private boolean cancelled = false;
+  private final String command;
+  private final ClientConnection sender;
 
-    public CommandEvent(ClientConnection sender, String command) {
-        this.sender = sender;
-        this.command = command;
-    }
+  public CommandEvent(ClientConnection sender, String command) {
+    this.sender = sender;
+    this.command = command;
+  }
 
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
+  @Override
+  public boolean isCancelled() {
+    return cancelled;
+  }
 
-    @Override
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
+  @Override
+  public void setCancelled(boolean cancelled) {
+    this.cancelled = cancelled;
+  }
 
-    public ClientConnection getSender() {
-        return sender;
-    }
+  public ClientConnection getSender() {
+    return sender;
+  }
 
-    public String getCommand() {
-        return command;
-    }
+  public String getCommand() {
+    return command;
+  }
 
 }

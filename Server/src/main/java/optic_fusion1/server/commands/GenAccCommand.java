@@ -13,8 +13,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.server.commands;
 
 import java.util.List;
@@ -30,15 +29,15 @@ import optic_fusion1.server.utils.RandomString;
 import optic_fusion1.commandsystem.command.Command;
 import optic_fusion1.commandsystem.command.CommandSender;
 
-public class GenAccCommand extends Command{
+public class GenAccCommand extends Command {
 
   private SocketServer server;
-  
-  public GenAccCommand(SocketServer server){
+
+  public GenAccCommand(SocketServer server) {
     super("genacc");
     this.server = server;
   }
-  
+
   @Override
   public boolean execute(CommandSender sender, String commandLabel, List<String> args) {
     RandomString randomString = new RandomString();

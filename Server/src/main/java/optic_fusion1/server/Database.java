@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package optic_fusion1.server;
 
 import java.io.File;
@@ -32,121 +31,121 @@ import optic_fusion1.server.utils.Utils;
 
 public class Database {
 
-    private Connection connection;
+  private Connection connection;
 
-    public Database() {
+  public Database() {
+    try {
+      File file = Utils.getFile("data", "database.db");
+      if (!file.exists()) {
         try {
-            File file = Utils.getFile("data", "database.db");
-            if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException ex) {
-                    Main.getLogger().severe(ex.getLocalizedMessage());
-                }
-            }
-            try {
-                connection = DriverManager.getConnection("jdbc:sqlite:" + file.toURI());
-            } catch (SQLException ex) {
-                Main.getLogger().severe(ex.getLocalizedMessage());
-            }
-            executePrepareStatement("CREATE TABLE IF NOT EXISTS `users` (`username` TEXT NOT NULL PRIMARY KEY, `uuid` BINARY(16) NOT NULL, `pass` CHAR(60) NOT NULL, `nickname` TEXT NOT NULL DEFAULT `Client`)");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+          file.createNewFile();
+        } catch (IOException ex) {
+          Main.getLogger().severe(ex.getLocalizedMessage());
         }
+      }
+      try {
+        connection = DriverManager.getConnection("jdbc:sqlite:" + file.toURI());
+      } catch (SQLException ex) {
+        Main.getLogger().severe(ex.getLocalizedMessage());
+      }
+      executePrepareStatement("CREATE TABLE IF NOT EXISTS `users` (`username` TEXT NOT NULL PRIMARY KEY, `uuid` BINARY(16) NOT NULL, `pass` CHAR(60) NOT NULL, `nickname` TEXT NOT NULL DEFAULT `Client`)");
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
     }
+  }
 
-    private void executePrepareStatement(String statement) {
-        try {
-            connection.prepareStatement(statement).execute();
-        } catch (SQLException ex) {
-            Main.getLogger().severe(ex.getLocalizedMessage());
-        }
+  private void executePrepareStatement(String statement) {
+    try {
+      connection.prepareStatement(statement).execute();
+    } catch (SQLException ex) {
+      Main.getLogger().severe(ex.getLocalizedMessage());
     }
+  }
 
-    private static final String INSERT_USER = "INSERT OR IGNORE INTO `users` (`username`, `uuid`, `pass`) VALUES (?, ?, ?)";
+  private static final String INSERT_USER = "INSERT OR IGNORE INTO `users` (`username`, `uuid`, `pass`) VALUES (?, ?, ?)";
 
-    public void insertUser(String userName, UUID uniqueId, String hashedPassword) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(INSERT_USER);
-            statement.setString(1, userName);
-            statement.setString(2, uniqueId.toString());
-            statement.setString(3, hashedPassword);
-            statement.execute();
-        } catch (SQLException ex) {
-            Main.getLogger().severe(ex.getLocalizedMessage());
-        }
+  public void insertUser(String userName, UUID uniqueId, String hashedPassword) {
+    try {
+      PreparedStatement statement = connection.prepareStatement(INSERT_USER);
+      statement.setString(1, userName);
+      statement.setString(2, uniqueId.toString());
+      statement.setString(3, hashedPassword);
+      statement.execute();
+    } catch (SQLException ex) {
+      Main.getLogger().severe(ex.getLocalizedMessage());
     }
+  }
 
-    private static final String CONTAINS_USER = "SELECT * FROM `users` WHERE `username` LIKE ?";
+  private static final String CONTAINS_USER = "SELECT * FROM `users` WHERE `username` LIKE ?";
 
-    public boolean containsUser(String userName) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(CONTAINS_USER);
-            statement.setString(1, userName);
-            ResultSet resultSet = statement.executeQuery();
-            return resultSet.next();
-        } catch (SQLException ex) {
-            Main.getLogger().severe(ex.getLocalizedMessage());
-        }
-        return false;
+  public boolean containsUser(String userName) {
+    try {
+      PreparedStatement statement = connection.prepareStatement(CONTAINS_USER);
+      statement.setString(1, userName);
+      ResultSet resultSet = statement.executeQuery();
+      return resultSet.next();
+    } catch (SQLException ex) {
+      Main.getLogger().severe(ex.getLocalizedMessage());
     }
+    return false;
+  }
 
-    private static final String GET_UUID = "SELECT uuid FROM `users` WHERE `username` = ?";
+  private static final String GET_UUID = "SELECT uuid FROM `users` WHERE `username` = ?";
 
-    public UUID getUUID(String username) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(GET_UUID);
-            statement.setString(1, username);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return UUID.fromString(resultSet.getString("uuid"));
-            }
-        } catch (SQLException ex) {
-            Main.getLogger().severe(ex.getLocalizedMessage());
-        }
-        return null;
+  public UUID getUUID(String username) {
+    try {
+      PreparedStatement statement = connection.prepareStatement(GET_UUID);
+      statement.setString(1, username);
+      ResultSet resultSet = statement.executeQuery();
+      if (resultSet.next()) {
+        return UUID.fromString(resultSet.getString("uuid"));
+      }
+    } catch (SQLException ex) {
+      Main.getLogger().severe(ex.getLocalizedMessage());
     }
+    return null;
+  }
 
-    private static final String GET_PASSWORD = "SELECT pass FROM `users` WHERE `username` = ?";
+  private static final String GET_PASSWORD = "SELECT pass FROM `users` WHERE `username` = ?";
 
-    public boolean isPasswordAlreadySet(String username) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(GET_PASSWORD);
-            statement.setString(1, username);
-            ResultSet resultSet = statement.executeQuery();
-            return resultSet.next();
-        } catch (SQLException ex) {
-            Main.getLogger().severe(ex.getLocalizedMessage());
-        }
-        return false;
+  public boolean isPasswordAlreadySet(String username) {
+    try {
+      PreparedStatement statement = connection.prepareStatement(GET_PASSWORD);
+      statement.setString(1, username);
+      ResultSet resultSet = statement.executeQuery();
+      return resultSet.next();
+    } catch (SQLException ex) {
+      Main.getLogger().severe(ex.getLocalizedMessage());
     }
+    return false;
+  }
 
-    public boolean isPasswordCorrect(String username, String password) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(GET_PASSWORD);
-            statement.setString(1, username);
-            ResultSet resultSet = statement.executeQuery();
-            boolean hasNext = resultSet.next();
-            if (hasNext) {
-                return BCrypt.checkpw(password, resultSet.getString("pass"));
-            }
-        } catch (SQLException ex) {
-            Main.getLogger().severe(ex.getLocalizedMessage());
-        }
-        return false;
+  public boolean isPasswordCorrect(String username, String password) {
+    try {
+      PreparedStatement statement = connection.prepareStatement(GET_PASSWORD);
+      statement.setString(1, username);
+      ResultSet resultSet = statement.executeQuery();
+      boolean hasNext = resultSet.next();
+      if (hasNext) {
+        return BCrypt.checkpw(password, resultSet.getString("pass"));
+      }
+    } catch (SQLException ex) {
+      Main.getLogger().severe(ex.getLocalizedMessage());
     }
+    return false;
+  }
 
-    private static final String UPDATE_NICKNAME = "UPDATE users SET nickname=? WHERE uuid=?";
+  private static final String UPDATE_NICKNAME = "UPDATE users SET nickname=? WHERE uuid=?";
 
-    public void updateNickname(UUID uniqueId, String nickname) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(UPDATE_NICKNAME);
-            statement.setString(1, nickname);
-            statement.setString(2, uniqueId.toString());
-            statement.execute();
-        } catch (SQLException ex) {
-            Main.getLogger().severe(ex.getLocalizedMessage());
-        }
+  public void updateNickname(UUID uniqueId, String nickname) {
+    try {
+      PreparedStatement statement = connection.prepareStatement(UPDATE_NICKNAME);
+      statement.setString(1, nickname);
+      statement.setString(2, uniqueId.toString());
+      statement.execute();
+    } catch (SQLException ex) {
+      Main.getLogger().severe(ex.getLocalizedMessage());
     }
+  }
 
 }

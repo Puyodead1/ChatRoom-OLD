@@ -24,32 +24,32 @@ import optic_fusion1.server.network.SocketServer;
 
 public class ConnectionListener implements ServerEventListener {
 
-    private final SocketServer server;
+  private final SocketServer server;
 
-    public ConnectionListener(SocketServer server) {
-        this.server = server;
-    }
+  public ConnectionListener(SocketServer server) {
+    this.server = server;
+  }
 
-    @Override
-    public void onSocketConnectionEstablished(ClientConnection client) {
-        Main.getLogger().info(String.format("New connection from %s", client.getAddress()));
-        if (server.isLoginRequired() && !client.isLoggedIn()) {
-            client.sendPacket(new MessagePacket(OpCode.LOGIN_REQUIRED, "", MessagePacket.MessageChatType.SYSTEM));
-        }
+  @Override
+  public void onSocketConnectionEstablished(ClientConnection client) {
+    Main.getLogger().info(String.format("New connection from %s", client.getAddress()));
+    if (server.isLoginRequired() && !client.isLoggedIn()) {
+      client.sendPacket(new MessagePacket(OpCode.LOGIN_REQUIRED, "", MessagePacket.MessageChatType.SYSTEM));
     }
+  }
 
-    @Override
-    public void onSocketPreConnect(ClientConnection client) {
-    }
+  @Override
+  public void onSocketPreConnect(ClientConnection client) {
+  }
 
-    @Override
-    public void onSocketDisconnect(ClientConnection clientConnection) {
-        if (clientConnection.isLoggedIn()) {
-            Main.getLogger().info(String.format("%s has disconnected from %s", clientConnection.getUsername(), clientConnection.getAddress()));
-            server.broadcastPacket(new MessagePacket(OpCode.DISCONNECT, clientConnection.getClient().serialize(), MessagePacket.MessageChatType.SYSTEM));
-        } else {
-            Main.getLogger().info(String.format("A User has disconnected from %s", clientConnection.getAddress()));
-        }
+  @Override
+  public void onSocketDisconnect(ClientConnection clientConnection) {
+    if (clientConnection.isLoggedIn()) {
+      Main.getLogger().info(String.format("%s has disconnected from %s", clientConnection.getUsername(), clientConnection.getAddress()));
+      server.broadcastPacket(new MessagePacket(OpCode.DISCONNECT, clientConnection.getClient().serialize(), MessagePacket.MessageChatType.SYSTEM));
+    } else {
+      Main.getLogger().info(String.format("A User has disconnected from %s", clientConnection.getAddress()));
     }
+  }
 
 }

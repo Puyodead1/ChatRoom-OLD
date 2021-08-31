@@ -13,14 +13,11 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ */
 package optic_fusion1.client.network.listeners;
 
 import optic_fusion1.client.network.SocketClient;
 import optic_fusion1.packets.IPacket;
-
-import java.net.Socket;
 
 public interface ClientEventListener {
 

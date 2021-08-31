@@ -23,29 +23,29 @@ import java.net.URISyntaxException;
 
 public class Main {
 
-    private static ChatRoomLogger logger;
-    private static Client client;
+  private static ChatRoomLogger logger;
+  private static Client client;
 
-    public static void main(String[] args) {
-        try {
-            logger = new ChatRoomLogger("ChatRoom Client", "client.log");
-            Utils.saveResource(Utils.getFolder(Utils.RESOURCE_FOLDER_NAME), "ping.wav", true);
-            client = new Client();
-        } catch (IOException e) {
-            System.err.println("Failed to create logger!");
-            e.printStackTrace();
-            System.exit(1);
-        } catch (URISyntaxException e) {
-            System.err.println("Failed to copy ping.wav");
-            System.exit(0);
-        }
+  public static void main(String[] args) {
+    try {
+      logger = new ChatRoomLogger("ChatRoom Client", "client.log");
+      Utils.saveResource(Utils.getFolder(Utils.RESOURCE_FOLDER_NAME), "ping.wav", true);
+      client = new Client();
+    } catch (IOException e) {
+      System.err.println("Failed to create logger!");
+      e.printStackTrace();
+      System.exit(1);
+    } catch (URISyntaxException e) {
+      System.err.println("Failed to copy ping.wav");
+      System.exit(0);
     }
+  }
 
-    public static ChatRoomLogger getLogger() {
-        return logger;
-    }
+  public static ChatRoomLogger getLogger() {
+    return logger;
+  }
 
-    public static Client getClient() {
-        return client;
-    }
+  public static Client getClient() {
+    return client;
+  }
 }

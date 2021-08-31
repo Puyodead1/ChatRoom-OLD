@@ -26,37 +26,39 @@ import java.io.IOException;
 
 public class Main {
 
-    private static ChatRoomLogger logger;
-    private static Server server;
+  private static ChatRoomLogger logger;
+  private static Server server;
 
-    public static void main(String[] args) {
-        try {
-            try {
-                logger = new ChatRoomLogger("ChatRoom Server", "server.log");
-                server = new Server();
+  public static void main(String[] args) {
+    try {
+      try {
+        logger = new ChatRoomLogger("ChatRoom Server", "server.log");
+        server = new Server();
 
-                String line;
-                while (server.isRunning && (line = Main.getLogger().getConsoleReader().readLine("> ")) != null) {
-                    if (line.isEmpty() || line.isBlank()) continue;
+        String line;
+        while (server.isRunning && (line = Main.getLogger().getConsoleReader().readLine("> ")) != null) {
+          if (line.isEmpty() || line.isBlank()) {
+            continue;
+          }
 
-                    server.getSocketServer().broadcastPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, line).serialize(), MessagePacket.MessageChatType.SERVER));
-                    logger.info(String.format("* You: %s", line));
-                }
-            } catch (UserInterruptException e) {
-                server.threadStop("term", true);
-            }
-        } catch (IOException e) {
-            System.err.println("Failed to create logger!");
-            e.printStackTrace();
-            System.exit(1);
+          server.getSocketServer().broadcastPacket(new MessagePacket(OpCode.MESSAGE, new Message(null, line).serialize(), MessagePacket.MessageChatType.SERVER));
+          logger.info(String.format("* You: %s", line));
         }
+      } catch (UserInterruptException e) {
+        server.threadStop("term", true);
+      }
+    } catch (IOException e) {
+      System.err.println("Failed to create logger!");
+      e.printStackTrace();
+      System.exit(1);
     }
+  }
 
-    public static ChatRoomLogger getLogger() {
-        return logger;
-    }
+  public static ChatRoomLogger getLogger() {
+    return logger;
+  }
 
-    public static Server getServer() {
-        return server;
-    }
+  public static Server getServer() {
+    return server;
+  }
 }
