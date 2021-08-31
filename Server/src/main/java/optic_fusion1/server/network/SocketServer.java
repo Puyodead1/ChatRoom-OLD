@@ -368,16 +368,16 @@ public class SocketServer {
     }
 
     private void loadPropertiesFile() {
-        File file = new File("server", "server.properties");
-        if (!file.exists()) {
-            Utils.saveResource(new File("server"), "server.properties", false);
-        }
         try {
+            File file = Utils.getFile("data", "server.properties");
+            if (!file.exists()) {
+                Utils.saveResource(Utils.getFolder("data"), "server.properties", false);
+            }
             SERVER_PROPERTIES.load(new FileInputStream(file));
             serverIP = SERVER_PROPERTIES.getProperty("server-ip");
             port = Integer.parseInt(SERVER_PROPERTIES.getProperty("server-port", "25565"));
             allowInsecurePasswords = Boolean.parseBoolean(SERVER_PROPERTIES.getProperty("allow-insecure-properties", "false"));
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             Main.getLogger().severe(ex.getLocalizedMessage());
         }
     }

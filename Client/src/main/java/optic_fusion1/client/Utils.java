@@ -2,22 +2,32 @@ package optic_fusion1.client;
 
 import javax.sound.sampled.*;
 import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 public class Utils {
+
+    public static String RESOURCE_FOLDER_NAME = "resources";
+    public static String LOG_FOLDER_NAME = "logs";
 
     public static void playClip(File clipFile) throws IOException,
             UnsupportedAudioFileException, LineUnavailableException, InterruptedException {
         class AudioListener implements LineListener {
             private boolean done = false;
-            @Override public synchronized void update(LineEvent event) {
+
+            @Override
+            public synchronized void update(LineEvent event) {
                 LineEvent.Type eventType = event.getType();
                 if (eventType == LineEvent.Type.STOP || eventType == LineEvent.Type.CLOSE) {
                     done = true;
                     notifyAll();
                 }
             }
+
             public synchronized void waitUntilDone() throws InterruptedException {
-                while (!done) { wait(); }
+                while (!done) {
+                    wait();
+                }
             }
         }
         AudioListener listener = new AudioListener();
@@ -85,11 +95,26 @@ public class Utils {
         return input;
     }
 
-    public static void playSound(String soundName) throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
-        File file = new File("client", String.format("%s.wav", soundName));
+    public static void playSound(String soundName) throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException, URISyntaxException {
+        File file = new File(getFolder(RESOURCE_FOLDER_NAME), String.format("%s.wav", soundName));
         if (!file.exists()) {
-            Utils.saveResource(new File("client"), String.format("%s.wav", soundName), false);
+            Utils.saveResource(getFolder(RESOURCE_FOLDER_NAME), String.format("%s.wav", soundName), false);
         }
         Utils.playClip(file);
+    }
+
+    public static String getJarDirectory() throws URISyntaxException {
+        return new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI()).toPath().getParent().toString();
+    }
+
+    public static File getFile(String folderName, String fileName) throws URISyntaxException {
+        File folder = getFolder(folderName);
+        return Paths.get(folder.getPath(), fileName).toFile();
+    }
+
+    public static File getFolder(String folderName) throws URISyntaxException {
+        File file = Paths.get(getJarDirectory(), folderName).toFile();
+        if (!file.exists()) file.mkdir();
+        return file;
     }
 }

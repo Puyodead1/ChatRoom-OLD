@@ -19,6 +19,7 @@ package optic_fusion1.client;
 import optic_fusion1.common.logging.ChatRoomLogger;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class Main {
 
@@ -28,11 +29,15 @@ public class Main {
     public static void main(String[] args) {
         try {
             logger = new ChatRoomLogger("ChatRoom Client", "client.log");
+            Utils.saveResource(Utils.getFolder(Utils.RESOURCE_FOLDER_NAME), "ping.wav", true);
             client = new Client();
         } catch (IOException e) {
             System.err.println("Failed to create logger!");
             e.printStackTrace();
             System.exit(1);
+        } catch (URISyntaxException e) {
+            System.err.println("Failed to copy ping.wav");
+            System.exit(0);
         }
     }
 

@@ -29,6 +29,7 @@ import optic_fusion1.packets.serializers.Message;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class PacketListener implements ClientEventListener {
 
@@ -65,7 +66,7 @@ public class PacketListener implements ClientEventListener {
                                 // play notification sound
                                 try {
                                     Utils.playSound("ping");
-                                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException | InterruptedException e) {
+                                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException | InterruptedException | URISyntaxException e) {
                                     e.printStackTrace();
                                 }
                             }
