@@ -16,36 +16,26 @@
  */
 package optic_fusion1.client;
 
-import optic_fusion1.common.logging.ChatRoomLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class Main {
 
-  private static ChatRoomLogger logger;
-  private static Client client;
+    private static final Logger LOGGER = LogManager.getLogger();
 
-  public static void main(String[] args) {
-    try {
-      logger = new ChatRoomLogger("ChatRoom Client", "client.log");
-      Utils.saveResource(Utils.getFolder(Utils.RESOURCE_FOLDER_NAME), "ping.wav", true);
-      client = new Client();
-    } catch (IOException e) {
-      System.err.println("Failed to create logger!");
-      e.printStackTrace();
-      System.exit(1);
-    } catch (URISyntaxException e) {
-      System.err.println("Failed to copy ping.wav");
-      System.exit(0);
+    public static void main(String[] args) throws IOException {
+        LOGGER.info("Welcome to ChatRoom!");
+
+        // TODO: start main thread
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        new ChatRoomConsole().start();
     }
-  }
-
-  public static ChatRoomLogger getLogger() {
-    return logger;
-  }
-
-  public static Client getClient() {
-    return client;
-  }
 }

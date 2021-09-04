@@ -16,17 +16,15 @@
  */
 package optic_fusion1.client.network;
 
-import optic_fusion1.client.Main;
 import optic_fusion1.client.network.listeners.ClientEventListener;
 import optic_fusion1.commandsystem.command.CommandSender;
 import optic_fusion1.packets.IPacket;
-import optic_fusion1.packets.OpCode;
 import optic_fusion1.packets.PacketRegister;
-import optic_fusion1.packets.impl.MessagePacket;
 import optic_fusion1.packets.impl.PingPacket;
 import optic_fusion1.packets.serializers.Client;
-import optic_fusion1.packets.serializers.Message;
 import optic_fusion1.packets.utils.RSACrypter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -38,9 +36,10 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
 
 public class SocketClient implements CommandSender {
+
+  private static final Logger LOGGER = LogManager.getLogger();
 
   private final String ip;
   private final int port;
@@ -84,7 +83,7 @@ public class SocketClient implements CommandSender {
         try {
           int packetLength = this.dataInputStream.readInt();
           if (packetLength > this.maxPacketSize) {
-            Main.getLogger().log(Level.WARNING, "Server packet is over max size of {0}", maxPacketSize);
+            LOGGER.warn( String.format("Server packet is over max size of %s", maxPacketSize));
             try {
               dataInputStream.skipBytes(packetLength);
             } catch (Exception e) {
@@ -146,7 +145,8 @@ public class SocketClient implements CommandSender {
         }
       }
     }
-    handleInput();
+
+//    handleInput();
   }
 
   public void disconnect() {
@@ -288,19 +288,19 @@ public class SocketClient implements CommandSender {
 
   @Override
   public void sendMessage(String message) {
-    Main.getLogger().info(message);
+    LOGGER.info(message);
   }
-
-  public void handleInput() throws IOException {
-    String line;
-    while (client.isRunning() && (line = Main.getLogger().getConsoleReader().readLine("> ")) != null) {
-      if (line.isEmpty() || line.isBlank()) {
-        continue;
-      }
-
-      sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(getClientUser(), line).serialize(), MessagePacket.MessageChatType.USER));
-    }
-  }
+//
+//  public void handleInput() throws IOException {
+//    String line;
+//    while (client.isRunning() && (line = Main.getLogger().getConsoleReader().readLine("> ")) != null) {
+//      if (line.isEmpty() || line.isBlank()) {
+//        continue;
+//      }
+//
+//      sendPacket(new MessagePacket(OpCode.MESSAGE, new Message(getClientUser(), line).serialize(), MessagePacket.MessageChatType.USER));
+//    }
+//  }
 
   public String getIp() {
     return ip;
